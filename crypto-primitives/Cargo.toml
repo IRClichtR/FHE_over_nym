@@ -7,3 +7,4 @@ edition = "2024"
 getrandom = "0.4.2"
 rand = { version = "0.10.1", features = ["sys_rng"] }
 thiserror = "2.0.18"
+zeroize = "1.8.2"

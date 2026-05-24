@@ -1,3 +1,7 @@
+
+use zeroize::Zeroizing;
+pub type ZeroizingVec<T> = Zeroizing<Vec<T>>;
+
 use getrandom::{rand_core::TryRng, SysRng};
 use error::HKDFError;
 pub mod error;
@@ -30,6 +34,20 @@ impl SaltGenerator {
             .map_err(|e| HKDFError::SaltGenerationError(e.to_string()))?;
         
         Ok(Salt(salt))
+    }
+}
+
+pub struct HKDFParameters {
+    pub ikm: ZeroizingVec<u8>,
+    pub salt: Salt,
+}
+
+impl HKDFParameters {    
+    pub fn new(ikm: impl Into<Vec<u8>>, salt: Salt) -> Result<Self, HKDFError> {
+        Ok(Self {
+            ikm: ZeroizingVec::new(ikm.into()),
+            salt,
+        })
     }
 }
 
