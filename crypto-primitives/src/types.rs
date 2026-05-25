@@ -42,12 +42,12 @@ pub struct RecipientBundle {
 // -------------------------------
 
 pub struct SenderKeys {
-    tag_key: TagKey,
-    binding_key: BindingKey,
+    pub(crate) tag_key: TagKey,
+    pub(crate) binding_key: BindingKey,
 }
 
 pub struct RecipientKeys {
-    tag_key: TagKey,
+    pub(crate) tag_key: TagKey,
 }
 
 // --- Proof types ---

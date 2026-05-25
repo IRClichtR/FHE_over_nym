@@ -10,8 +10,8 @@ pub enum KdfError {
     ExpandFailure(String),
 }
 
-#[derive(Error)]
-pub struct ProofError {
+#[derive(Debug, Error)]
+pub enum ProofError {
     #[error("Invalid proof: {0}")]
     InvalidProof(String),
     #[error("Nullifier already used")]

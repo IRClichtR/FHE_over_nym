@@ -5,6 +5,8 @@ edition = "2024"
 
 [dependencies]
 getrandom = "0.4.2"
+hkdf = "0.12"
+sha2 = "0.10"
 rand = { version = "0.10.1", features = ["sys_rng"] }
 rand_core = { version = "0.6", features = ["getrandom"] } 
 # for rand_core::OsRng. TODO: find alternative
