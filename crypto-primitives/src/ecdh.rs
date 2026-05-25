@@ -62,6 +62,8 @@ mod tests {
     
     #[test]
     fn test_compute_stealth_input() {
+        println!("Testing compute_stealth_input consistency sender == recipient generation...");
+        
         let recipient_static = generate_static_keypair();
         let sender_ephemeral = generate_ephemeral_keypair();
 

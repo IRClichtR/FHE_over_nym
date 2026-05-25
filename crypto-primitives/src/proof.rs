@@ -1,4 +1,4 @@
-use hmac::{Hmac, Mac};
+use hmac::Hmac;
 use sha2::Sha256;
 use crate::error::ProofError;
 use crate::nonce::Nonce;
@@ -10,6 +10,7 @@ use crate::types::{BindingKey, BindingProof, Nullifier, NullifierProof, StealthI
 /// It reveals nothing about the binding key or the underlying ECDH material,
 /// but is deterministic: the same (binding_key, tag) pair always yields the same nullifier.
 fn generate_nullifier(binding_key: &BindingKey, tag: &Tag) -> Result<Nullifier, ProofError> {
+    use hmac::Mac;
     let mut mac = Hmac::<Sha256>::new_from_slice(&binding_key.0)?;
     mac.update(&tag.0);
     Ok(Nullifier(mac.finalize().into_bytes().into()))
@@ -33,6 +34,7 @@ pub fn generate_proof(
 ) -> Result<BindingProof, ProofError> {
     let nullifier = generate_nullifier(binding_key, tag)?;
 
+    use hmac::Mac;
     let mut mac = Hmac::<Sha256>::new_from_slice(&binding_key.0)?;
     mac.update(&nonce.0);
     mac.update(shared_secret);
@@ -71,4 +73,25 @@ pub fn verify_proof(
     }
 
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_generate_and_verify_proof() {
+        println!("Testing generate_proof and verify_proof consistency...");
+        let binding_key = BindingKey([1u8; 32]);
+        let tag = Tag([2u8; 32]);
+        let shared_secret = [3u8; 32];
+        let stealth_input = StealthInput([4u8; 32]);
+        let nonce = Nonce([5u8; 32]);
+
+        let proof = generate_proof(&tag, &shared_secret, &stealth_input, nonce, &binding_key)
+            .expect("Failed to generate proof");
+        let nullifier = generate_nullifier(&binding_key, &tag).expect("Failed to generate nullifier");
+        let seen = NullifierProof::new();
+        verify_proof(&proof, &nullifier, &seen).expect("Failed to verify proof");
+    }
 }

@@ -28,3 +28,17 @@ impl NonceGenerator {
         Ok(Nonce(bytes))
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_nonce_generation() {
+        println!("Testing nonce generation...");
+        let mut generator = NonceGenerator::new();
+        let nonce1 = generator.generate().expect("Failed to generate nonce");
+        let nonce2 = generator.generate().expect("Failed to generate nonce");
+        assert_ne!(nonce1.0, nonce2.0, "Generated nonces should be unique");
+    }
+}

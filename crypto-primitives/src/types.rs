@@ -1,13 +1,16 @@
 // use serde::{Serialize, Deserialize};
 use std::collections::HashSet;
-use tfhe::{ClientKey as FheSecretKey, PublicKey as FhePublicKey};
+use tfhe::{ClientKey as FheSecretKey, CompactPublicKey as FhePublicKey};
 use x25519_dalek::{PublicKey, StaticSecret};
 
 #[derive(PartialEq, Eq)]
+#[derive(Debug)]
 pub struct Tag(pub [u8; 32]); // HMAC output onchain identifier
 #[derive(PartialEq, Eq, Hash)]
 pub struct Nullifier(pub [u8; 32]); // HMAC(binding_key, tag), replay protection
+#[derive(Debug, PartialEq, Eq)]
 pub struct TagKey(pub [u8; 32]); // derived, used for HMAC only
+#[derive(Debug, PartialEq, Eq)]
 pub struct BindingKey(pub [u8; 32]); // derived, used only for proof nullifier
 pub struct StealthInput(pub [u8; 32]); // X25519 output /!\ never store the shared secret, only use it for identification and zero it out immediately after use
 
@@ -48,11 +51,14 @@ pub struct RelayerBundle {
 // --- Derived Keys ---
 // -------------------------------
 
+#[derive(Debug, PartialEq, Eq)]
+#[allow(dead_code)]
 pub struct SenderKeys {
     pub(crate) tag_key: TagKey,
     pub(crate) binding_key: BindingKey,
 }
 
+#[derive(Debug, PartialEq, Eq)]
 pub struct RecipientKeys {
     pub(crate) tag_key: TagKey,
 }
@@ -61,7 +67,25 @@ pub struct RecipientKeys {
 // -------------------------------
 
 pub struct BindingProof(pub(crate) Vec<u8>);
-pub struct NullifierProof(pub(crate) HashSet<Nullifier>); // set of spent nullifiers, keyed by HMAC(binding_key, tag)
+/// Set of spent nullifiers maintained by the relay for replay protection.
+pub struct NullifierProof(pub(crate) HashSet<Nullifier>);
+
+impl NullifierProof {
+    /// Creates an empty spent-nullifier set.
+    pub fn new() -> Self {
+        NullifierProof(HashSet::new())
+    }
+
+    /// Marks a nullifier as spent. Returns false if it was already present (replay).
+    pub fn insert(&mut self, nullifier: Nullifier) -> bool {
+        self.0.insert(nullifier)
+    }
+
+    /// Returns true if the nullifier has already been spent.
+    pub fn contains(&self, nullifier: &Nullifier) -> bool {
+        self.0.contains(nullifier)
+    }
+}
 
 // Results
 

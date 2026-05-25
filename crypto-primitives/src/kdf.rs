@@ -64,3 +64,29 @@ fn expand(prk: &[u8; 32], info: &[u8]) -> [u8; 32] {
     hkdf.expand(info, &mut okm).expect("key derivation failed");
     okm
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_derive_keys_consistency() {
+        println!("Testing derive_sender_keys and derive_recipient_keys does not error with valid input...");
+        let shared_secret = [0x42u8; 32];
+        let stealth_input = StealthInput([0x24u8; 32]);
+        let nonce = Nonce([0x99u8; 32]);
+        let sender_keys = derive_sender_keys(&shared_secret, &stealth_input, &nonce).unwrap();
+        let recipient_keys = derive_recipient_keys(&shared_secret, &stealth_input, &nonce).unwrap();
+    }
+
+    #[test]
+    fn test_derive_keys_deterministic() {
+        println!("Testing derive_sender_keys and derive_recipient_keys produces deterministic output...");
+        let shared_secret = [0x42u8; 32];
+        let stealth_input = StealthInput([0x24u8; 32]);
+        let nonce = Nonce([0x99u8; 32]);
+        let sender_keys_1 = derive_sender_keys(&shared_secret, &stealth_input, &nonce).unwrap();
+        let sender_keys_2 = derive_sender_keys(&shared_secret, &stealth_input, &nonce).unwrap();
+        assert_eq!(sender_keys_1, sender_keys_2);
+    }
+}

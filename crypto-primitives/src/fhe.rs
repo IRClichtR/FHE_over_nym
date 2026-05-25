@@ -1,27 +1,35 @@
 use tfhe::prelude::*;
-use tfhe::{ClientKey as FheSecretKey, ConfigBuilder, FheUint8, PublicKey as FhePublicKey, ServerKey as FheServerKey};
+use tfhe::{
+    ClientKey as FheSecretKey, CompactCiphertextList, CompactPublicKey as FhePublicKey,
+    ConfigBuilder, FheUint8, ServerKey as FheServerKey,
+};
 
-/// Byte-level FHE ciphertext: each plaintext byte is independently encrypted as a `FheUint8`.
-/// The vector length equals the plaintext length, so byte positions are preserved across
-/// homomorphic operations.
+/// Byte-level FHE ciphertext: each plaintext byte independently encrypted as a `FheUint8`.
 pub type FheCiphertext = Vec<FheUint8>;
 
-/// Encrypts `plaintext` byte-by-byte under `fhe_pk`.
+/// Encrypts `plaintext` under `fhe_pk` using compact batch encryption.
 ///
-/// The public key allows anyone (e.g. the sender) to encrypt without holding the secret key.
-/// The resulting `FheCiphertext` can be evaluated homomorphically by the relayer and decrypted
-/// only by the holder of the corresponding `FheSecretKey`.
-pub fn encrypt(plaintext: &[u8], fhe_pk: &FhePublicKey) -> FheCiphertext {
-    // TODO: optimize replace by Compact change of responsabilities Client A encrypt compact then relayer expands to FheUint8 for evaluation, then compacts again before sending to B for decryption
-    plaintext
-        .iter()
-        .map(|&byte| FheUint8::encrypt(byte, fhe_pk))
+/// `CompactCiphertextList` packs all bytes in one pass then expands them server-side via
+/// key-switching — far faster than per-byte `PublicKey` GLWE encryption.
+/// `server_key` is needed for the expand (key-switching) step.
+pub fn encrypt(
+    plaintext: &[u8],
+    fhe_pk: &FhePublicKey,
+    server_key: &FheServerKey,
+) -> FheCiphertext {
+    tfhe::set_server_key(server_key.clone());
+    let mut builder = CompactCiphertextList::builder(fhe_pk);
+    for &byte in plaintext {
+        builder.push(byte);
+    }
+    let compact_list = builder.build();
+    let expander = compact_list.expand().unwrap();
+    (0..plaintext.len())
+        .map(|i| expander.get::<FheUint8>(i).unwrap().unwrap())
         .collect()
 }
 
-/// Decrypts `ciphertext` byte-by-byte using `fhe_sk`, returning the original plaintext.
-///
-/// Only the recipient holding the secret key can call this; the relayer never sees plaintext.
+/// Decrypts `ciphertext` byte-by-byte; only the holder of `fhe_sk` can call this.
 pub fn decrypt(ciphertext: &FheCiphertext, fhe_sk: &FheSecretKey) -> Vec<u8> {
     ciphertext.iter().map(|ct| ct.decrypt(fhe_sk)).collect()
 }
@@ -29,11 +37,9 @@ pub fn decrypt(ciphertext: &FheCiphertext, fhe_sk: &FheSecretKey) -> Vec<u8> {
 /// Bundles the three TFHE keys produced at setup time.
 ///
 /// Key distribution across protocol roles:
-/// - `public_key`  → sender  (encrypts the payload)
-/// - `secret_key`  → recipient (decrypts the result)
-/// - `server_key`  → relayer  (evaluates the circuit homomorphically, never decrypts)
-///
-/// In practice these keys are exchanged out-of-band before any message is sent.
+/// - `public_key`  → sender  (compact batch encryption)
+/// - `secret_key`  → recipient (decryption)
+/// - `server_key`  → relayer  (expand + homomorphic evaluation)
 pub struct FHEKeys {
     pub public_key: FhePublicKey,
     pub secret_key: FheSecretKey,
@@ -41,10 +47,6 @@ pub struct FHEKeys {
 }
 
 impl FHEKeys {
-    /// Generates a fresh TFHE key set using the default parameter set.
-    ///
-    /// `tfhe::generate_keys` returns a `(ClientKey, ServerKey)` pair; the `PublicKey`
-    /// is then derived from the `ClientKey` so that the sender can encrypt without it.
     pub fn new() -> Self {
         let config = ConfigBuilder::default().build();
         let (client_key, server_key) = tfhe::generate_keys(config);
@@ -53,15 +55,34 @@ impl FHEKeys {
     }
 }
 
-/// Applies a homomorphic computation to `ciphertext` on the relay side.
-///
-/// `server_key` is set as the active thread-local key before the circuit runs;
-/// TFHE integer operations implicitly use whichever key was last set on the thread.
-/// Minimal example: homomorphically adds 1 to each byte in the ciphertext, returning a new ciphertext.
+/// Applies a homomorphic computation server-side.
+/// Minimal example: adds 1 to every byte in the ciphertext.
 pub fn evaluate(ciphertext: &FheCiphertext, server_key: &FheServerKey) -> FheCiphertext {
     tfhe::set_server_key(server_key.clone());
-    ciphertext
-        .iter()
-        .map(|ct| ct + 1u8)
-        .collect()
+    ciphertext.iter().map(|ct| ct + 1u8).collect()
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_encrypt_decrypt() {
+        let keys = FHEKeys::new();
+        let plaintext = b"Hello, FHE!";
+        let ciphertext = encrypt(plaintext, &keys.public_key, &keys.server_key);
+        let decrypted = decrypt(&ciphertext, &keys.secret_key);
+        assert_eq!(plaintext.to_vec(), decrypted);
+    }
+
+    #[test]
+    fn test_evaluate() {
+        let keys = FHEKeys::new();
+        let plaintext = b"Hello, FHE!";
+        let ciphertext = encrypt(plaintext, &keys.public_key, &keys.server_key);
+        let evaluated_ciphertext = evaluate(&ciphertext, &keys.server_key);
+        let decrypted = decrypt(&evaluated_ciphertext, &keys.secret_key);
+        let expected: Vec<u8> = plaintext.iter().map(|&b| b + 1).collect();
+        assert_eq!(expected, decrypted);
+    }
 }
