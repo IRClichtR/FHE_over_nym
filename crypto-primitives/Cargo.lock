@@ -199,6 +199,7 @@ version = "0.1.0"
 dependencies = [
  "getrandom 0.4.2",
  "hkdf",
+ "hmac",
  "rand",
  "rand_core 0.6.4",
  "serde",
