@@ -12,6 +12,7 @@ use x25519_dalek::{
 fn generate_x25519_keypair() -> (X25519StaticSecret, X25519PublicKey) {
     let private_key = X25519StaticSecret::random_from_rng(&mut OsRng);
     let public_key = X25519PublicKey::from(&private_key);
+    
     (private_key, public_key)
 }
 
