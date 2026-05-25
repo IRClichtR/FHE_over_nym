@@ -1,7 +1,7 @@
 use hmac::{Hmac, Mac};
 use sha2::Sha256;
 use crate::nonce::Nonce;
-use crate::types::{StealthInput, Tag, TagKey};
+use crate::types::{Tag, TagKey};
 
 /// Generates a tag using HMAC with the provided tag key and nonce.
 pub fn generate_tag(tag_key: TagKey, nonce: Nonce) -> Tag {
