@@ -1,4 +1,5 @@
 pub mod ecdh;
+pub mod nonce;
 pub mod error;
 pub mod fhe;
 pub mod kdf;

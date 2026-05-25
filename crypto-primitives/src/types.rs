@@ -4,7 +4,6 @@ use tfhe::{ClientKey as FheSecretKey, PublicKey as FhePublicKey};
 use x25519_dalek::{PublicKey, StaticSecret};
 
 pub struct Tag(pub [u8; 32]); // HMAC output onchain identifier
-pub struct Nonce(pub [u8; 32]); // Random per message value
 pub struct Nullifier(pub [u8; 32]); // HMAC(binding_key, tag), replay protection
 pub struct TagKey(pub [u8; 32]); // derived, used for HMAC only
 pub struct BindingKey(pub [u8; 32]); // derived, used only for proof nullifier

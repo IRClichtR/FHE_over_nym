@@ -1,7 +1,8 @@
-use crate::types::{Nonce, Tag, TagKey};
+use crate::nonce::Nonce;
+use crate::types::{StealthInput, Tag, TagKey};
 
-pub fn derive_tag_key(shared_secret: [u8; 32]) -> TagKey {
-    // Derive a tag key from the shared secret using a KDF
+
+pub fn derive_tag_key(shared_secret: [u8; 32], stealth_input: StealthInput, nonce: Nonce) -> TagKey {
     unimplemented!()
 }
 

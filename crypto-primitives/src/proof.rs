@@ -1,11 +1,11 @@
+use crate::nonce::Nonce;
 use crate::types::{
-    BindingKey, 
+    BindingKey,
     BindingProof,
-    Nonce, 
-    Nullifier, 
-    NullifierProof, 
-    StealthInput, 
-    Tag
+    Nullifier,
+    NullifierProof,
+    StealthInput,
+    Tag,
 };
 use crate::error::ProofError;
 
