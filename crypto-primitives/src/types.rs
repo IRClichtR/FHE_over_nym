@@ -5,6 +5,7 @@ use x25519_dalek::{PublicKey, StaticSecret};
 
 #[derive(PartialEq, Eq)]
 pub struct Tag(pub [u8; 32]); // HMAC output onchain identifier
+#[derive(PartialEq, Eq, Hash)]
 pub struct Nullifier(pub [u8; 32]); // HMAC(binding_key, tag), replay protection
 pub struct TagKey(pub [u8; 32]); // derived, used for HMAC only
 pub struct BindingKey(pub [u8; 32]); // derived, used only for proof nullifier
@@ -28,7 +29,6 @@ pub struct StaticKeyPair {
 // --- Bundle Types ---
 // -------------------------------
 
-#[derive(Debug)]
 pub struct SenderBundle {
     pub pk_b: PublicKey,
     pub fhe_pk: FhePublicKey, // The public key is shared by b in an out of scope phase
@@ -60,8 +60,8 @@ pub struct RecipientKeys {
 // --- Proof types ---
 // -------------------------------
 
-pub struct BindingProof(Vec<u8>);
-pub struct NullifierProof(HashSet<Nullifier>); // contains the nullifier and the proof that it was correctly derived from the tag and binding key
+pub struct BindingProof(pub(crate) Vec<u8>);
+pub struct NullifierProof(pub(crate) HashSet<Nullifier>); // set of spent nullifiers, keyed by HMAC(binding_key, tag)
 
 // Results
 

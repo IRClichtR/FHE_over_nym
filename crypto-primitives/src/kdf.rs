@@ -57,9 +57,10 @@ fn extract(ikm: &[u8; 64], nonce: &[u8; 32]) -> [u8; 32] {
 // Output is always 32 bytes (within HKDF-SHA256 max of 8160), and PRK is always
 // 32 bytes (= SHA-256 output), so both from_prk and expand are infallible here.
 fn expand(prk: &[u8; 32], info: &[u8]) -> [u8; 32] {
-    let hkdf = Hkdf::<Sha256>::from_prk(prk).expect("PRK length matches SHA-256 output size");
+    // Both operations are infallible: PRK is always 32 bytes (= SHA-256 output)
+    // and OKM is always 32 bytes (well within the 8160-byte HKDF-SHA256 limit).
+    let hkdf = Hkdf::<Sha256>::from_prk(prk).expect("key derivation failed");
     let mut okm = [0u8; 32];
-    hkdf.expand(info, &mut okm)
-        .expect("32-byte output is within HKDF-SHA256 limits");
+    hkdf.expand(info, &mut okm).expect("key derivation failed");
     okm
 }
