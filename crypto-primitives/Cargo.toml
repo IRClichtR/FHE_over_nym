@@ -5,6 +5,14 @@ edition = "2024"
 
 [dependencies]
 getrandom = "0.4.2"
+hkdf = "0.12"
+sha2 = "0.10"
 rand = { version = "0.10.1", features = ["sys_rng"] }
+rand_core = { version = "0.6", features = ["getrandom"] } 
+# for rand_core::OsRng. TODO: find alternative
+serde = "1.0.228"
+tfhe = { version = "1.6.1", features = ["integer"] } # integer implies shortint; boolean not needed
 thiserror = "2.0.18"
+x25519-dalek = { version = "2.0.1", features = ["static_secrets"] }
 zeroize = "1.8.2"
+hmac = "0.12" # must match sha2 0.10 (both use digest 0.10)
