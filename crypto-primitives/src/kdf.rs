@@ -2,7 +2,7 @@ use zeroize::Zeroizing;
 pub type ZeroizingVec<T> = Zeroizing<Vec<T>>;
 
 use getrandom::{rand_core::TryRng, SysRng};
-use error::HKDFError;
+use crate::error::HKDFError;
 
 pub struct Salt(pub(crate) [u8; 32]);
 

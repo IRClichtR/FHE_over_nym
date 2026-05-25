@@ -1,12 +1,16 @@
-use crate::types::{EphemeralKeyPair, PublicKey, StaticKeyPair, StaticSecret, StealthInput};
-use x25519_dalek::{
-    PublicKey as X25519PublicKey, 
-    StaticSecret as X25519StaticSecret
+use crate::types::{
+    EphemeralKeyPair,  
+    StaticKeyPair, 
+    StealthInput
 };
 use rand_core::OsRng;
+use x25519_dalek::{
+    PublicKey as X25519PublicKey, 
+    StaticSecret as X25519StaticSecret,
+};
 
 fn generate_x25519_keypair() -> (X25519StaticSecret, X25519PublicKey) {
-    let private_key = X25519StaticSecret::new(&mut OsRng);
+    let private_key = X25519StaticSecret::random_from_rng(&mut OsRng);
     let public_key = X25519PublicKey::from(&private_key);
     (private_key, public_key)
 }
@@ -18,8 +22,8 @@ pub fn generate_ephemeral_keypair() -> EphemeralKeyPair {
     let (secret, public) = generate_x25519_keypair();
     
     EphemeralKeyPair {
-        secret: StaticSecret(secret.to_bytes()),
-        public: PublicKey(public.to_bytes()),
+        secret: X25519StaticSecret::from(secret.to_bytes()),
+        public: X25519PublicKey::from(public.to_bytes()),
     }
 }
 
@@ -31,8 +35,8 @@ pub fn generate_static_keypair() -> StaticKeyPair {
     let (sk_b, pk_b) = generate_x25519_keypair();
     
     StaticKeyPair {
-        sk_b: StaticSecret(sk_b.to_bytes()),
-        pk_b: PublicKey(pk_b.to_bytes()),
+        sk_b: X25519StaticSecret::from(sk_b.to_bytes()),
+        pk_b: X25519PublicKey::from(pk_b.to_bytes()),
     }
 }
 
@@ -47,9 +51,22 @@ pub fn generate_static_keypair() -> StaticKeyPair {
 /// Both calls produce identical output — this is the DH guarantee.
 /// The result is used as input to key derivation in kdf.rs.
 /// It is never stored beyond that derivation.
-pub fn compute_stealth_input(secret: &SecretKey, public: &PublicKey) -> StealthInput {
-    let dh_secret = DhSecret::from(secret.0);
-    let dh_public = DhPublic::from(public.0);
+pub fn compute_stealth_input(secret: &X25519StaticSecret, public: &X25519PublicKey) -> StealthInput {
+    StealthInput(secret.diffie_hellman(public).to_bytes())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
     
-    StealthInput(dh_secret.diffie_hellman(&dh_public).to_bytes())
+    #[test]
+    fn test_compute_stealth_input() {
+        let recipient_static = generate_static_keypair();
+        let sender_ephemeral = generate_ephemeral_keypair();
+
+        let sender_stealth_input = compute_stealth_input(&sender_ephemeral.secret, &recipient_static.pk_b);
+        let recipient_stealth_input = compute_stealth_input(&recipient_static.sk_b, &sender_ephemeral.public);
+
+        assert_eq!(sender_stealth_input.0, recipient_stealth_input.0);
+    }
 }

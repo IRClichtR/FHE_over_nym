@@ -11,3 +11,11 @@ pub enum HKDFError {
     #[error("expand failure: {0}")]
     ExpandFailure(String),
 }
+
+#[derive(Error)]
+pub struct ProofError {
+    #[error("Invalid proof: {0}")]
+    InvalidProof(String),
+    #[error("Nullifier already used")]
+    ReplayedNullifier,
+}

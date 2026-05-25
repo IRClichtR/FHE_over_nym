@@ -1,4 +1,13 @@
-use crate::types::{BindingKey, BindingProof, Nonce, Nullifier, StealthInput};
+use crate::types::{
+    BindingKey, 
+    BindingProof,
+    Nonce, 
+    Nullifier, 
+    NullifierProof, 
+    StealthInput, 
+    Tag
+};
+use crate::error::ProofError;
 
 fn generate_nullifier(binding_key: BindingKey, tag: Tag) -> Nullifier {
     // Placeholder for generating a nullifier
@@ -14,7 +23,7 @@ pub fn generate_proof(tag: Tag, shared_secret: [u8; 32], stealth_input: StealthI
     unimplemented!()
 }
 
-pub fn verify_proof(proof: BindingProof, tag: Tag, nullifier: Nullifier, seen: &NullifierSet) -> Result<(), ProofError> {
+pub fn verify_proof(proof: BindingProof, tag: Tag, nullifier: Nullifier, seen: &NullifierProof) -> Result<(), ProofError> {
     // Placeholder for verifying a proof
     // In a real implementation, this would involve checking the validity of the proof against the provided tag, shared secret, and binding key,
     // returning true if the proof is valid and false otherwise.

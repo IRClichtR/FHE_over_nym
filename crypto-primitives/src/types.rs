@@ -1,7 +1,6 @@
 // use serde::{Serialize, Deserialize};
-use thiserror::Error;
 use std::collections::HashSet;
-use tfhe::{FhePublicKey, FheSecretKey};
+use tfhe::{ClientKey as FheSecretKey, PublicKey as FhePublicKey};
 use x25519_dalek::{PublicKey, StaticSecret};
 
 pub struct Tag(pub [u8; 32]); // HMAC output onchain identifier
@@ -24,20 +23,18 @@ pub struct StaticKeyPair {
     pub pk_b: PublicKey, // given by other protocole to a
 }
 
-
 // --- Bundle Types ---
 // -------------------------------
 
 #[derive(Debug)]
 pub struct SenderBundle {
-    pub pk_b: StaticKeyPair::pk_b,
+    pub pk_b: PublicKey,
     pub fhe_pk: FhePublicKey, // The public key is shared by b in an out of scope phase
     pub shared_secret: [u8; 32], // The shared_secret for identification only
 }
 
-#[derive(Debug)]
 pub struct RecipientBundle {
-    pub sk_b: StaticKeyPair::sk_b,
+    pub sk_b: StaticSecret,
     pub fhe_sk: FheSecretKey, // The secret key is shared by b in an out of scope phase
     pub shared_secret: [u8; 32], 
 }
@@ -58,17 +55,8 @@ pub struct RecipientKeys {
 // -------------------------------
 
 pub struct BindingProof(Vec<u8>);
-pub struct NullifierProof(Hashset<Nullifier>); // contains the nullifier and the proof that it was correctly derived from the tag and binding key
+pub struct NullifierProof(HashSet<Nullifier>); // contains the nullifier and the proof that it was correctly derived from the tag and binding key
 
 // Results
 
 pub struct FheEvalResult(Vec<u8>); // The result of the FHE evaluation, encrypted under fhe_pk, travels in envelope as ct
-
-#[derive(Error)]
-pub struct ProofError {
-    #[error("Invalid proof: {0}")]
-    InvalidProof(String),
-    #[error("Nullifier already used")]
-    ReplayedNullifier,
-}
-

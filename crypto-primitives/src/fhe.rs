@@ -1,4 +1,5 @@
-use tfhe::{FheCiphertext, FhePublicKey, FheSecretKey};
+use tfhe::{ClientKey as FheSecretKey, PublicKey as FhePublicKey};
+use tfhe::ConfigBuilder;
 
 pub fn encrypt(plaintext: &[u8], fhe_pk: &FhePublicKey) -> FheCiphertext {
     // Placeholder for encryption logic using the TFHE library
@@ -22,8 +23,8 @@ pub fn evaluate(ciphertext: &FheCiphertext) -> FheCiphertext {
 }
 
 pub fn generate_keys() -> (FhePublicKey, FheSecretKey) {
-    // Placeholder for key generation logic using the TFHE library
-    // In a real implementation, this would involve generating a pair of public and secret keys,
-    // and returning them as a tuple.
-    unimplemented!()
+    let config = ConfigBuilder::default()
+        .build();
+    let (client_key, public_key) = tfhe::generate_keys(config);
+    (public_key, client_key) 
 }
