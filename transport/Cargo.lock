@@ -7688,6 +7688,7 @@ name = "transport"
 version = "0.1.0"
 dependencies = [
  "nym-bin-common",
+ "nym-sdk",
  "postcard",
  "serde",
  "smolmix",
