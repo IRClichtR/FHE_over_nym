@@ -13,14 +13,12 @@ use crate::error::TransportError;
 /// The sender creates a message and wraps it in a SURB that contains the
 /// serialized envelope.
 /// client: Mixnet client that will be used to send and receive messages
-/// service_address: The NymAddress of the recipient of the message
-pub struct SurbSender {
+pub struct SurbTransport {
     client: MixnetClient,
-    service_address: Recipient, // either mailbox or dispatcher address
 }
 
-impl SurbSender {
-    pub async fn new(target_addr: Recipient) -> Result<Self, TransportError> {
+impl SurbTransport {
+    pub async fn new() -> Result<Self, TransportError> {
         let config_dir = std::env::var("CONFIG_DIR").unwrap_or_else(|_| "./config".to_string());
         let storage_paths = StoragePaths::new_from_dir(&config_dir)?;
         let client: MixnetClient = MixnetClientBuilder::new_with_default_storage(storage_paths)
@@ -31,19 +29,20 @@ impl SurbSender {
             .connect_to_mixnet()
             .await?;
 
-        Ok(SurbSender {
-            client,
-            service_address: target_addr,
-        })
+        Ok(SurbTransport { client })
+    }
+
+    pub fn address(&self) -> &Recipient {
+        self.client.nym_address()
     }
 
     // this function should be launched in a separate task and should listen for incoming messages on the mixnet and process them accordingly. For the POC, we can just print the received messages.
-    pub async fn send(&mut self, envelope: Envelope) -> Result<Envelope, TransportError> {
+    pub async fn send(&mut self, recipient: Recipient, envelope: Envelope) -> Result<Envelope, TransportError> {
         let codec = EnvelopeCodec::new();
         let serialized_envelope = codec.encode_envelope(&envelope)?;
         // Include one SURB so the receiver can reply without learning our address
         self.client
-            .send_message(self.service_address, serialized_envelope, IncludedSurbs::Amount(1))
+            .send_message(recipient, serialized_envelope, IncludedSurbs::Amount(1))
             .await?;
 
         // Listen for reply
@@ -59,30 +58,6 @@ impl SurbSender {
                 }
             }
         }
-    }
-}
-
-pub struct SurbReceiver {
-    client: MixnetClient,
-}
-
-impl SurbReceiver {
-    pub async fn new() -> Result<Self, TransportError> {
-        let config_dir = std::env::var("CONFIG_DIR").unwrap_or_else(|_| "./config".to_string());
-        let storage_paths = StoragePaths::new_from_dir(&config_dir)?;
-        let client: MixnetClient = MixnetClientBuilder::new_with_default_storage(storage_paths)
-            .await
-            .map_err(|e| TransportError::InitializationError(format!("Failed to create MixnetClient: {}", e)))?
-            .build()
-            .map_err(|e| TransportError::InitializationError(format!("Failed to initialize MixnetClient: {}", e)))?
-            .connect_to_mixnet()
-            .await?;
-
-        Ok(SurbReceiver { client })
-    }
-
-    pub fn address(&self) -> &Recipient {
-        self.client.nym_address()
     }
 
     /// Wait for an incoming SURB-tagged message. Returns the deserialized envelope
@@ -123,7 +98,7 @@ mod tests {
     #[tokio::test]
     #[ignore = "requires live Nym mixnet"]
     async fn surb_roundtrip() {
-        let mut receiver = SurbReceiver::new().await.unwrap();
+        let mut receiver = SurbTransport::new().await.unwrap();
         let receiver_addr = *receiver.address();
 
         let sent = Envelope::Client(ClientEnvelope {
@@ -147,8 +122,8 @@ mod tests {
         });
 
         // Sender sends anonymously (with SURB) and blocks until the reply arrives
-        let mut sender = SurbSender::new(receiver_addr).await.unwrap();
-        let reply = sender.send(sent.clone()).await.unwrap();
+        let mut sender = SurbTransport::new().await.unwrap();
+        let reply = sender.send(receiver_addr, sent.clone()).await.unwrap();
 
         let received = receiver_task.await.unwrap();
         assert_eq!(sent, received);

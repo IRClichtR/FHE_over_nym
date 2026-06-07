@@ -493,9 +493,9 @@ checksum = "bef38d45163c2f1dde094a7dfd33ccf595c92905c8f8f4fdc18d06fb1037718a"
 
 [[package]]
 name = "bitflags"
-version = "2.11.1"
+version = "2.13.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c4512299f36f043ab09a583e57bceb5a5aab7a73db1805848e8fef3c9e8c78b3"
+checksum = "b4388bee8683e3d04af747c73422af53102d2bd24d9eadb6cbc100baef4b43f8"
 dependencies = [
  "serde_core",
 ]
@@ -534,17 +534,17 @@ dependencies = [
 
 [[package]]
 name = "blake3"
-version = "1.8.5"
+version = "1.8.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0aa83c34e62843d924f905e0f5c866eb1dd6545fc4d719e803d9ba6030371fce"
+checksum = "2468ef7d57b3fb7e16b576e8377cdbde2320c60e1491e961d11da40fc4f02a2d"
 dependencies = [
  "arrayref",
  "arrayvec",
  "cc",
  "cfg-if",
  "constant_time_eq",
- "cpufeatures 0.3.0",
- "digest 0.11.3",
+ "cpufeatures 0.2.17",
+ "digest 0.10.7",
 ]
 
 [[package]]
@@ -705,9 +705,9 @@ dependencies = [
 
 [[package]]
 name = "cc"
-version = "1.2.62"
+version = "1.2.63"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a1dce859f0832a7d088c4f1119888ab94ef4b5d6795d1ce05afb7fe159d79f98"
+checksum = "556e016178bb5662a08681bbe0f00f8e17631781a4dfc8c45e466e4b185ec27f"
 dependencies = [
  "find-msvc-tools",
  "jobserver",
@@ -759,13 +759,24 @@ dependencies = [
 ]
 
 [[package]]
+name = "chacha20"
+version = "0.10.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6f8d983286843e49675a4b7a2d174efe136dc93a18d69130dd18198a6c167601"
+dependencies = [
+ "cfg-if",
+ "cpufeatures 0.3.0",
+ "rand_core 0.10.1",
+]
+
+[[package]]
 name = "chacha20poly1305"
 version = "0.10.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "10cd79432192d1c0f4e1a0fef9527696cc039165d729fb41b3f4f4f354c2dc35"
 dependencies = [
  "aead",
- "chacha20",
+ "chacha20 0.9.1",
  "cipher 0.4.4",
  "poly1305",
  "zeroize",
@@ -833,17 +844,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c8d4a3bb8b1e0c1050499d1815f5ab16d04f0959b233085fb31653fbfc9d98f9"
 
 [[package]]
-name = "classic-mceliece-rust"
-version = "3.1.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "62a9b6d27e553269a76625911aa8cf6afaa8659f1b0c85b410cb5f51a87183d9"
-dependencies = [
- "rand 0.8.6",
- "sha3 0.10.9",
- "zeroize",
-]
-
-[[package]]
 name = "cmake"
 version = "0.1.58"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -854,9 +854,9 @@ dependencies = [
 
 [[package]]
 name = "cmov"
-version = "0.5.3"
+version = "0.5.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3f88a43d011fc4a6876cb7344703e297c71dda42494fee094d5f7c76bf13f746"
+checksum = "0c9ea0ac24bc397ab3c98583a3c9ba74fa56b09a4449bbe172b9b1ddb016027a"
 
 [[package]]
 name = "coarsetime"
@@ -1257,9 +1257,9 @@ dependencies = [
 
 [[package]]
 name = "ct-codecs"
-version = "1.1.6"
+version = "1.1.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9b10589d1a5e400d61f9f38f12f884cfd080ff345de8f17efda36fe0e4a02aa8"
+checksum = "49fb0c6640b4507ebd99ff67677009e381ba5eee1d14df78de4a3d16eb123c39"
 
 [[package]]
 name = "ctr"
@@ -1436,47 +1436,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a4ae5f15dda3c708c0ade84bfee31ccab44a3da4f88015ed22f63732abe300c8"
 
 [[package]]
-name = "defmt"
-version = "0.3.100"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f0963443817029b2024136fc4dd07a5107eb8f977eaf18fcd1fdeb11306b64ad"
-dependencies = [
- "defmt 1.1.0",
-]
-
-[[package]]
-name = "defmt"
-version = "1.1.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a6e524506490a1953d237cb87b1cfc1e46f88c18f10a22dfe0f507dc6bfc7f7f"
-dependencies = [
- "bitflags 1.3.2",
- "defmt-macros",
-]
-
-[[package]]
-name = "defmt-macros"
-version = "1.1.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f0a27770e9c8f719a79d8b638281f4d828f77d8fd61e0bd94451b9b85e576a0b"
-dependencies = [
- "defmt-parser",
- "proc-macro-error2",
- "proc-macro2",
- "quote",
- "syn 2.0.117",
-]
-
-[[package]]
-name = "defmt-parser"
-version = "1.0.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "10d60334b3b2e7c9d91ef8150abfb6fa4c1c39ebbcf4a81c2e346aad939fee3e"
-dependencies = [
- "thiserror 2.0.18",
-]
-
-[[package]]
 name = "der"
 version = "0.7.10"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1577,7 +1536,6 @@ checksum = "f1dd6dbb5841937940781866fa1281a1ff7bd3bf827091440879f9994983d5c2"
 dependencies = [
  "block-buffer 0.12.0",
  "crypto-common 0.2.2",
- "ctutils",
 ]
 
 [[package]]
@@ -1759,18 +1717,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "75030f3c4f45dafd7586dd6780965a8c7e8e285a5ecb86713e63a79c5b2766f3"
 dependencies = [
  "cfg-if",
-]
-
-[[package]]
-name = "enum-as-inner"
-version = "0.6.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a1e6a265c649f3f5979b601d26f1d05ada116434c87741c9493cb56218f76cbc"
-dependencies = [
- "heck",
- "proc-macro2",
- "quote",
- "syn 2.0.117",
 ]
 
 [[package]]
@@ -2199,15 +2145,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "hash32"
-version = "0.3.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "47d60b12902ba28e2730cd37e95b8c9223af2808df9e902d4df49588d1470606"
-dependencies = [
- "byteorder",
-]
-
-[[package]]
 name = "hashbrown"
 version = "0.12.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2302,20 +2239,10 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "cdc6457c0eb62c71aac4bc17216026d8410337c4126773b9c5daba343f17964f"
 dependencies = [
  "atomic-polyfill",
- "hash32 0.2.1",
+ "hash32",
  "rustc_version",
  "serde",
  "spin",
- "stable_deref_trait",
-]
-
-[[package]]
-name = "heapless"
-version = "0.8.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0bfb9eb618601c89945a70e254898da93b13be0388091d42117462b265bb3fad"
-dependencies = [
- "hash32 0.3.1",
  "stable_deref_trait",
 ]
 
@@ -2341,26 +2268,25 @@ dependencies = [
 ]
 
 [[package]]
-name = "hickory-proto"
-version = "0.25.2"
+name = "hickory-net"
+version = "0.26.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f8a6fe56c0038198998a6f217ca4e7ef3a5e51f46163bd6dd60b5c71ca6c6502"
+checksum = "e2295ed2f9c31e471e1428a8f88a3f0e1f4b27c15049592138d1eebe9c35b183"
 dependencies = [
  "async-trait",
  "bytes",
  "cfg-if",
  "data-encoding",
- "enum-as-inner",
  "futures-channel",
  "futures-io",
  "futures-util",
  "h2 0.4.14",
+ "hickory-proto",
  "http 1.4.1",
  "idna",
  "ipnet",
- "once_cell",
- "rand 0.9.2",
- "ring",
+ "jni",
+ "rand 0.10.1",
  "rustls 0.23.40",
  "thiserror 2.0.18",
  "tinyvec",
@@ -2368,31 +2294,56 @@ dependencies = [
  "tokio-rustls 0.26.4",
  "tracing",
  "url",
- "webpki-roots 0.26.11",
+ "webpki-roots 1.0.7",
+]
+
+[[package]]
+name = "hickory-proto"
+version = "0.26.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0bab31817bfb44672a252e97fe81cd0c18d1b2cf892108922f6818820df8c643"
+dependencies = [
+ "data-encoding",
+ "idna",
+ "ipnet",
+ "jni",
+ "once_cell",
+ "prefix-trie",
+ "rand 0.10.1",
+ "ring",
+ "thiserror 2.0.18",
+ "tinyvec",
+ "tracing",
+ "url",
 ]
 
 [[package]]
 name = "hickory-resolver"
-version = "0.25.2"
+version = "0.26.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "dc62a9a99b0bfb44d2ab95a7208ac952d31060efc16241c87eaf36406fecf87a"
+checksum = "f0d58d28879ceecde6607729660c2667a081ccdc082e082675042793960f178c"
 dependencies = [
  "cfg-if",
  "futures-util",
+ "hickory-net",
  "hickory-proto",
  "ipconfig",
+ "ipnet",
+ "jni",
  "moka",
+ "ndk-context",
  "once_cell",
  "parking_lot",
- "rand 0.9.2",
+ "rand 0.10.1",
  "resolv-conf",
  "rustls 0.23.40",
  "smallvec",
+ "system-configuration 0.7.0",
  "thiserror 2.0.18",
  "tokio",
  "tokio-rustls 0.26.4",
  "tracing",
- "webpki-roots 0.26.11",
+ "webpki-roots 1.0.7",
 ]
 
 [[package]]
@@ -2575,9 +2526,9 @@ dependencies = [
 
 [[package]]
 name = "hyper"
-version = "1.10.0"
+version = "1.10.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "eb92f162bf56536459fc83c79b974bb12837acfed43d6bc370a7916d0ae15ecc"
+checksum = "55281c53a1894c864990125767da440a4e630446785086f52523b20033b74498"
 dependencies = [
  "atomic-waker",
  "bytes",
@@ -2615,7 +2566,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "33ca68d021ef39cf6463ab54c1d0f5daf03377b70561305bb89a8f83aab66e0f"
 dependencies = [
  "http 1.4.1",
- "hyper 1.10.0",
+ "hyper 1.10.1",
  "hyper-util",
  "rustls 0.23.40",
  "tokio",
@@ -2635,12 +2586,12 @@ dependencies = [
  "futures-util",
  "http 1.4.1",
  "http-body 1.0.1",
- "hyper 1.10.0",
+ "hyper 1.10.1",
  "ipnet",
  "libc",
  "percent-encoding",
  "pin-project-lite",
- "socket2 0.6.3",
+ "socket2 0.6.4",
  "tokio",
  "tower-service",
  "tracing",
@@ -2818,7 +2769,7 @@ version = "0.3.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "4d40460c0ce33d6ce4b0630ad68ff63d6661961c48b6dba35e5a4d81cfb48222"
 dependencies = [
- "socket2 0.6.3",
+ "socket2 0.6.4",
  "widestring",
  "windows-registry",
  "windows-result 0.4.1",
@@ -2830,6 +2781,9 @@ name = "ipnet"
 version = "2.12.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d98f6fed1fde3f8c21bc40a1abb88dd75e67924f9cffc3ef95607bad8017f8e2"
+dependencies = [
+ "serde",
+]
 
 [[package]]
 name = "is_terminal_polyfill"
@@ -2970,15 +2924,6 @@ dependencies = [
  "once_cell",
  "sha2 0.10.9",
  "signature 2.2.0",
-]
-
-[[package]]
-name = "keccak"
-version = "0.1.6"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "cb26cec98cce3a3d96cbb7bced3c4b16e3d13f27ec56dbd62cbc8f39cfb9d653"
-dependencies = [
- "cpufeatures 0.2.17",
 ]
 
 [[package]]
@@ -3216,7 +3161,6 @@ version = "0.0.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "779ade7aa5e1b4b400c716b313cbf69070988dd005f92e961c2da4c3c42fbea4"
 dependencies = [
- "classic-mceliece-rust",
  "libcrux-aesgcm",
  "libcrux-chacha20poly1305",
  "libcrux-ecdh",
@@ -3228,7 +3172,6 @@ dependencies = [
  "libcrux-ml-kem",
  "libcrux-sha2",
  "libcrux-traits",
- "rand 0.8.6",
  "rand 0.9.2",
  "tls_codec",
 ]
@@ -3287,10 +3230,10 @@ version = "0.1.17"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f02ab6bace2054fb888a3c16f990117b579d14a3088e472d63c6011fa185c9d3"
 dependencies = [
- "bitflags 2.11.1",
+ "bitflags 2.13.0",
  "libc",
  "plain",
- "redox_syscall 0.8.0",
+ "redox_syscall 0.8.1",
 ]
 
 [[package]]
@@ -3339,21 +3282,15 @@ dependencies = [
 
 [[package]]
 name = "log"
-version = "0.4.30"
+version = "0.4.32"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "616ec5685824bcc94416c6d4a7a446eea774a31efd7062c8480ba6fd06d7a6e5"
+checksum = "953f07c43838f8e6f9758cab68bf5bed85465e7587ebe0b823f1bcd81978ad3a"
 
 [[package]]
 name = "lru-slab"
 version = "0.1.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "112b39cec0b298b6c1999fee3e31427f74f676e4cb9879ed1a121b43661a4154"
-
-[[package]]
-name = "managed"
-version = "0.8.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0ca88d725a0a943b096803bd34e73a4437208b6077654cc4ecb2947a5f91618d"
 
 [[package]]
 name = "matchers"
@@ -3398,9 +3335,9 @@ dependencies = [
 
 [[package]]
 name = "mio"
-version = "1.2.0"
+version = "1.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "50b7e5b27aa02a74bac8c3f23f448f8d87ff11f92d3aac1a6ed369ee08cc56c1"
+checksum = "02bd0af71c67b473010cbbc60715ee815645a4dc942899111f494b4b737d6fda"
 dependencies = [
  "libc",
  "wasi 0.11.1+wasi-snapshot-preview1",
@@ -3419,7 +3356,7 @@ dependencies = [
  "hybrid-array",
  "module-lattice",
  "pkcs8 0.11.0",
- "sha3 0.11.0",
+ "sha3",
  "signature 3.0.0",
 ]
 
@@ -3450,6 +3387,12 @@ dependencies = [
  "tagptr",
  "uuid",
 ]
+
+[[package]]
+name = "ndk-context"
+version = "0.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "27b02d87554356db9e9a873add8782d4ea6e3e58ea071a9adb9a2e8ddb884a8b"
 
 [[package]]
 name = "ntapi"
@@ -3565,8 +3508,7 @@ dependencies = [
 [[package]]
 name = "nym-api-requests"
 version = "1.21.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "68b9b9e3e32cbdb97b892534ff3f9a2ff195625d5faa1b1b06cce6ade710689f"
+source = "git+https://github.com/IRClichtR/nym-forked?branch=develop#b80a3bdc2709361a4aaf9691408e2e72cc1f091a"
 dependencies = [
  "bs58",
  "celes",
@@ -3607,8 +3549,7 @@ dependencies = [
 [[package]]
 name = "nym-bandwidth-controller"
 version = "1.21.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "07e52306ee0a766e1682385d244912a45612c62b6f01c1de076a6cc6cc574182"
+source = "git+https://github.com/IRClichtR/nym-forked?branch=develop#b80a3bdc2709361a4aaf9691408e2e72cc1f091a"
 dependencies = [
  "async-trait",
  "log",
@@ -3626,8 +3567,7 @@ dependencies = [
 [[package]]
 name = "nym-bin-common"
 version = "1.21.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "cf673d95ef4c81c34965f559b62ec1cd0d32ac0588f01047aeebdd3e7d771ee7"
+source = "git+https://github.com/IRClichtR/nym-forked?branch=develop#b80a3bdc2709361a4aaf9691408e2e72cc1f091a"
 dependencies = [
  "const-str",
  "log",
@@ -3659,8 +3599,7 @@ dependencies = [
 [[package]]
 name = "nym-client-core"
 version = "1.21.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "cfd004dc65329ad5e2a5dfb5a38d5ed6b51edd8878a016e6eea017ce3a06ce2a"
+source = "git+https://github.com/IRClichtR/nym-forked?branch=develop#b80a3bdc2709361a4aaf9691408e2e72cc1f091a"
 dependencies = [
  "async-trait",
  "base64 0.22.1",
@@ -3671,7 +3610,7 @@ dependencies = [
  "gloo-timers",
  "http-body-util",
  "humantime",
- "hyper 1.10.0",
+ "hyper 1.10.1",
  "hyper-util",
  "nym-bandwidth-controller",
  "nym-client-core-config-types",
@@ -3720,8 +3659,7 @@ dependencies = [
 [[package]]
 name = "nym-client-core-config-types"
 version = "1.21.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6f65e542541780cf72e38d0bc0d02d1231bbd04733a03a6750b6a5cee74ddc7b"
+source = "git+https://github.com/IRClichtR/nym-forked?branch=develop#b80a3bdc2709361a4aaf9691408e2e72cc1f091a"
 dependencies = [
  "humantime-serde",
  "nym-config",
@@ -3737,8 +3675,7 @@ dependencies = [
 [[package]]
 name = "nym-client-core-gateways-storage"
 version = "1.21.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5ddb2e25d745cf3e0290b6a930b66ae349c59a2444716eab887c407464b08bfd"
+source = "git+https://github.com/IRClichtR/nym-forked?branch=develop#b80a3bdc2709361a4aaf9691408e2e72cc1f091a"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -3758,8 +3695,7 @@ dependencies = [
 [[package]]
 name = "nym-client-core-surb-storage"
 version = "1.21.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "45b2d329128dcea5cf758dbae69a28d3bcc679a4fb499c3a973e8c0f280fdef4"
+source = "git+https://github.com/IRClichtR/nym-forked?branch=develop#b80a3bdc2709361a4aaf9691408e2e72cc1f091a"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -3778,8 +3714,7 @@ dependencies = [
 [[package]]
 name = "nym-coconut-dkg-common"
 version = "1.21.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "fcdfaf17c8b2a73bd6d14a3b9432118d66cc2335a371f185791099d32c25feb0"
+source = "git+https://github.com/IRClichtR/nym-forked?branch=develop#b80a3bdc2709361a4aaf9691408e2e72cc1f091a"
 dependencies = [
  "cosmwasm-schema",
  "cosmwasm-std",
@@ -3793,8 +3728,7 @@ dependencies = [
 [[package]]
 name = "nym-common"
 version = "1.21.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f0d554049a6663082e3ca307342801777e4b1b2f4064a01d81a1fe7e816e06e0"
+source = "git+https://github.com/IRClichtR/nym-forked?branch=develop#b80a3bdc2709361a4aaf9691408e2e72cc1f091a"
 dependencies = [
  "tracing",
  "tracing-test",
@@ -3803,8 +3737,7 @@ dependencies = [
 [[package]]
 name = "nym-compact-ecash"
 version = "1.21.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "38e717b3c9511b33c9a0944548cd29493e3dd9d4a74182f402e446e0cd3d9e02"
+source = "git+https://github.com/IRClichtR/nym-forked?branch=develop#b80a3bdc2709361a4aaf9691408e2e72cc1f091a"
 dependencies = [
  "bincode",
  "bs58",
@@ -3827,8 +3760,7 @@ dependencies = [
 [[package]]
 name = "nym-config"
 version = "1.21.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "67c7899b5b56f6e64e86897600b1d07424e1b6b1f214ebe5991589e4af726d9a"
+source = "git+https://github.com/IRClichtR/nym-forked?branch=develop#b80a3bdc2709361a4aaf9691408e2e72cc1f091a"
 dependencies = [
  "dirs",
  "handlebars",
@@ -3843,8 +3775,7 @@ dependencies = [
 [[package]]
 name = "nym-contracts-common"
 version = "1.21.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "63a66c95598e53f4d2c403b956c009455fe45b29f936c47c81e3e81dd34e3b1b"
+source = "git+https://github.com/IRClichtR/nym-forked?branch=develop#b80a3bdc2709361a4aaf9691408e2e72cc1f091a"
 dependencies = [
  "bs58",
  "cosmwasm-schema",
@@ -3859,8 +3790,7 @@ dependencies = [
 [[package]]
 name = "nym-credential-storage"
 version = "1.21.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f401d82194180d2f727329fa6ebb45cbbf35764ecd6b72aca1e8bed90cd69a13"
+source = "git+https://github.com/IRClichtR/nym-forked?branch=develop#b80a3bdc2709361a4aaf9691408e2e72cc1f091a"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -3881,8 +3811,7 @@ dependencies = [
 [[package]]
 name = "nym-credential-utils"
 version = "1.21.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3645479f371cfcb9b5a5cfcc2fea502ecfc12e2d1f446d1f969dac8181a89d6c"
+source = "git+https://github.com/IRClichtR/nym-forked?branch=develop#b80a3bdc2709361a4aaf9691408e2e72cc1f091a"
 dependencies = [
  "log",
  "nym-bandwidth-controller",
@@ -3901,8 +3830,7 @@ dependencies = [
 [[package]]
 name = "nym-credentials"
 version = "1.21.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9d89e4cae186c07a2633dfd144ba9c70ae6a267593ce75861616ac73e96f34a4"
+source = "git+https://github.com/IRClichtR/nym-forked?branch=develop#b80a3bdc2709361a4aaf9691408e2e72cc1f091a"
 dependencies = [
  "bincode",
  "cosmrs",
@@ -3920,14 +3848,15 @@ dependencies = [
  "serde",
  "thiserror 2.0.18",
  "time",
+ "tokio",
+ "wasmtimer",
  "zeroize",
 ]
 
 [[package]]
 name = "nym-credentials-interface"
 version = "1.21.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ef264e9abf3176c8cf0c3263ab3043ce57216e2796ccf5249845d1f043012fa7"
+source = "git+https://github.com/IRClichtR/nym-forked?branch=develop#b80a3bdc2709361a4aaf9691408e2e72cc1f091a"
 dependencies = [
  "nym-bls12_381-fork",
  "nym-compact-ecash",
@@ -3946,8 +3875,7 @@ dependencies = [
 [[package]]
 name = "nym-crypto"
 version = "1.21.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f13b6cadd4df3e4dfaa25ba94205ac1a7906df93dc1c9b97756b2172b288dc65"
+source = "git+https://github.com/IRClichtR/nym-forked?branch=develop#b80a3bdc2709361a4aaf9691408e2e72cc1f091a"
 dependencies = [
  "aead",
  "aes 0.8.4",
@@ -3982,8 +3910,7 @@ dependencies = [
 [[package]]
 name = "nym-ecash-contract-common"
 version = "1.21.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2deef2d1cbfdb782fa5bbd1468df88ec10f7a38164ae40810277422e1d307770"
+source = "git+https://github.com/IRClichtR/nym-forked?branch=develop#b80a3bdc2709361a4aaf9691408e2e72cc1f091a"
 dependencies = [
  "bs58",
  "cosmwasm-schema",
@@ -3997,8 +3924,7 @@ dependencies = [
 [[package]]
 name = "nym-ecash-signer-check-types"
 version = "1.21.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f32cd02514f84785845bef1459ab9658fc4fa0f9929ba89c95d11f2df887ed6b"
+source = "git+https://github.com/IRClichtR/nym-forked?branch=develop#b80a3bdc2709361a4aaf9691408e2e72cc1f091a"
 dependencies = [
  "nym-coconut-dkg-common",
  "nym-crypto",
@@ -4014,8 +3940,7 @@ dependencies = [
 [[package]]
 name = "nym-ecash-time"
 version = "1.21.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ffc1d4711ae1bf29eb767c20bce9af8c70ed3275d072d36ff0629767c38051d8"
+source = "git+https://github.com/IRClichtR/nym-forked?branch=develop#b80a3bdc2709361a4aaf9691408e2e72cc1f091a"
 dependencies = [
  "nym-compact-ecash",
  "time",
@@ -4024,8 +3949,7 @@ dependencies = [
 [[package]]
 name = "nym-exit-policy"
 version = "1.21.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "893c88b2dd2453172442664990a5f8a353f8d07085467b0f6a7d9d440c587015"
+source = "git+https://github.com/IRClichtR/nym-forked?branch=develop#b80a3bdc2709361a4aaf9691408e2e72cc1f091a"
 dependencies = [
  "serde",
  "serde_json",
@@ -4037,8 +3961,7 @@ dependencies = [
 [[package]]
 name = "nym-gateway-client"
 version = "1.21.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "332c8b3c3ffccf9b44af288e47b622867c861465813e2c49bea4fd616c9657f3"
+source = "git+https://github.com/IRClichtR/nym-forked?branch=develop#b80a3bdc2709361a4aaf9691408e2e72cc1f091a"
 dependencies = [
  "futures",
  "getrandom 0.2.17",
@@ -4077,8 +4000,7 @@ dependencies = [
 [[package]]
 name = "nym-gateway-requests"
 version = "1.21.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "64f7889402dfc69dcbb126ef2f3f677a795cb59daa43a0645421e6c7ecfde726"
+source = "git+https://github.com/IRClichtR/nym-forked?branch=develop#b80a3bdc2709361a4aaf9691408e2e72cc1f091a"
 dependencies = [
  "bs58",
  "futures",
@@ -4108,8 +4030,7 @@ dependencies = [
 [[package]]
 name = "nym-group-contract-common"
 version = "1.21.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f6f9773b3adc4b979c4e0f86d8932a78d10149df36e136f770653ad5405ce41a"
+source = "git+https://github.com/IRClichtR/nym-forked?branch=develop#b80a3bdc2709361a4aaf9691408e2e72cc1f091a"
 dependencies = [
  "cosmwasm-schema",
  "cw-controllers",
@@ -4121,14 +4042,14 @@ dependencies = [
 [[package]]
 name = "nym-http-api-client"
 version = "1.21.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f8baece856a24e0c9da773b60da2abd1deb4b4d9dbae21fd9c919e25ea1f5e09"
+source = "git+https://github.com/IRClichtR/nym-forked?branch=develop#b80a3bdc2709361a4aaf9691408e2e72cc1f091a"
 dependencies = [
  "async-trait",
  "bincode",
  "bytes",
  "cfg-if",
  "encoding_rs",
+ "fastrand",
  "hickory-resolver",
  "http 1.4.1",
  "inventory",
@@ -4155,8 +4076,7 @@ dependencies = [
 [[package]]
 name = "nym-http-api-client-macro"
 version = "1.21.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "02824c7f3d22c36608a46e30b8b76ec4c7b105ecd5d618eabb5a11ab4b5b24a6"
+source = "git+https://github.com/IRClichtR/nym-forked?branch=develop#b80a3bdc2709361a4aaf9691408e2e72cc1f091a"
 dependencies = [
  "proc-macro-crate",
  "proc-macro2",
@@ -4168,8 +4088,7 @@ dependencies = [
 [[package]]
 name = "nym-http-api-common"
 version = "1.21.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e521c094e84acc5d4517877ec0712d9355317acd23e7c486b3dbcf6620959cf2"
+source = "git+https://github.com/IRClichtR/nym-forked?branch=develop#b80a3bdc2709361a4aaf9691408e2e72cc1f091a"
 dependencies = [
  "bincode",
  "serde",
@@ -4180,8 +4099,7 @@ dependencies = [
 [[package]]
 name = "nym-id"
 version = "1.21.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f94a8f2bd5c2aad044b2b19d0171c22f6195a907bd4d8e69e0fd6af912bc2e58"
+source = "git+https://github.com/IRClichtR/nym-forked?branch=develop#b80a3bdc2709361a4aaf9691408e2e72cc1f091a"
 dependencies = [
  "nym-credential-storage",
  "nym-credentials",
@@ -4194,8 +4112,7 @@ dependencies = [
 [[package]]
 name = "nym-ip-packet-requests"
 version = "1.21.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7b4f21741b1630a2590694635e6a7e581e0ad0bd2869dc12bbee85d4abe4f5d7"
+source = "git+https://github.com/IRClichtR/nym-forked?branch=develop#b80a3bdc2709361a4aaf9691408e2e72cc1f091a"
 dependencies = [
  "bincode",
  "bytes",
@@ -4208,41 +4125,15 @@ dependencies = [
  "serde",
  "thiserror 2.0.18",
  "time",
- "tokio",
  "tokio-util",
  "tracing",
 ]
 
 [[package]]
-name = "nym-kkt"
-version = "1.21.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "418c2f988f1c054614bb4a304483c1c77f1b95fcfc4def683ac85f040f7c2422"
-dependencies = [
- "libcrux-chacha20poly1305",
- "libcrux-ecdh",
- "libcrux-kem",
- "libcrux-ml-kem",
- "libcrux-psq",
- "num_enum",
- "nym-crypto",
- "nym-kkt-ciphersuite",
- "nym-kkt-context",
- "nym-pemstore",
- "rand 0.9.2",
- "strum",
- "thiserror 2.0.18",
- "zeroize",
-]
-
-[[package]]
 name = "nym-kkt-ciphersuite"
 version = "1.21.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5c542deef0697840fbb52f18fc501159c406c592d8230e9ddd25f72aae1dafaa"
+source = "git+https://github.com/IRClichtR/nym-forked?branch=develop#b80a3bdc2709361a4aaf9691408e2e72cc1f091a"
 dependencies = [
- "blake3",
- "libcrux-sha3",
  "num_enum",
  "semver",
  "strum",
@@ -4251,43 +4142,21 @@ dependencies = [
 ]
 
 [[package]]
-name = "nym-kkt-context"
+name = "nym-lp-data"
 version = "1.21.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "79771d0063a14e016cef574cc281f6ccd01a7ddc4848a087abb778c2b0b0bb0c"
+source = "git+https://github.com/IRClichtR/nym-forked?branch=develop#b80a3bdc2709361a4aaf9691408e2e72cc1f091a"
 dependencies = [
- "num_enum",
- "nym-kkt-ciphersuite",
- "thiserror 2.0.18",
-]
-
-[[package]]
-name = "nym-lp"
-version = "1.21.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "41729e741e563da9be339d0ed582d300bf327feb3df7ba9129e9e9a12d8c6efa"
-dependencies = [
- "bs58",
  "bytes",
- "libcrux-psq",
  "num_enum",
  "nym-common",
- "nym-crypto",
- "nym-kkt",
- "nym-kkt-ciphersuite",
- "rand 0.9.2",
  "thiserror 2.0.18",
- "tls_codec",
- "tokio",
  "tracing",
- "zeroize",
 ]
 
 [[package]]
 name = "nym-metrics"
 version = "1.21.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "692df266469446e22d840985da8ba9a47c86ae2188093d7a9ca3aadd7c530862"
+source = "git+https://github.com/IRClichtR/nym-forked?branch=develop#b80a3bdc2709361a4aaf9691408e2e72cc1f091a"
 dependencies = [
  "dashmap",
  "lazy_static",
@@ -4298,8 +4167,7 @@ dependencies = [
 [[package]]
 name = "nym-mixnet-client"
 version = "1.21.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "14294da5052732856af14e2136413e55a45655d9052d0f9f0540c62d04871ebd"
+source = "git+https://github.com/IRClichtR/nym-forked?branch=develop#b80a3bdc2709361a4aaf9691408e2e72cc1f091a"
 dependencies = [
  "dashmap",
  "futures",
@@ -4315,8 +4183,7 @@ dependencies = [
 [[package]]
 name = "nym-mixnet-contract-common"
 version = "1.21.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8943be4c68c7177f8183ef1718217b56e1884ce3270c9860257cab3f82842f5c"
+source = "git+https://github.com/IRClichtR/nym-forked?branch=develop#b80a3bdc2709361a4aaf9691408e2e72cc1f091a"
 dependencies = [
  "bs58",
  "cosmwasm-schema",
@@ -4337,8 +4204,7 @@ dependencies = [
 [[package]]
 name = "nym-multisig-contract-common"
 version = "1.21.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7681c7b43201d45a4958eab012a93e285ce47f7bba405e1ba1808edd195f3347"
+source = "git+https://github.com/IRClichtR/nym-forked?branch=develop#b80a3bdc2709361a4aaf9691408e2e72cc1f091a"
 dependencies = [
  "cosmwasm-schema",
  "cosmwasm-std",
@@ -4354,12 +4220,10 @@ dependencies = [
 [[package]]
 name = "nym-network-defaults"
 version = "1.21.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d66cf484f36f42622a62b5e79d98f7aba49b8ace6ad82fe95a372f5d8bba5ec3"
+source = "git+https://github.com/IRClichtR/nym-forked?branch=develop#b80a3bdc2709361a4aaf9691408e2e72cc1f091a"
 dependencies = [
  "cargo_metadata 0.19.2",
  "dotenvy",
- "log",
  "regex",
  "schemars",
  "serde",
@@ -4370,10 +4234,38 @@ dependencies = [
 ]
 
 [[package]]
+name = "nym-network-monitors-contract-common"
+version = "1.21.0"
+source = "git+https://github.com/IRClichtR/nym-forked?branch=develop#b80a3bdc2709361a4aaf9691408e2e72cc1f091a"
+dependencies = [
+ "cosmwasm-schema",
+ "cosmwasm-std",
+ "cw-controllers",
+ "schemars",
+ "serde",
+ "thiserror 2.0.18",
+]
+
+[[package]]
+name = "nym-node-families-contract-common"
+version = "1.21.0"
+source = "git+https://github.com/IRClichtR/nym-forked?branch=develop#b80a3bdc2709361a4aaf9691408e2e72cc1f091a"
+dependencies = [
+ "cosmwasm-schema",
+ "cosmwasm-std",
+ "cw-controllers",
+ "cw-utils",
+ "nym-contracts-common",
+ "nym-mixnet-contract-common",
+ "schemars",
+ "serde",
+ "thiserror 2.0.18",
+]
+
+[[package]]
 name = "nym-node-requests"
 version = "1.21.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f1e4a882d896519b3bca0caa9d601253f81542eee0a4f58a2bd0d54c96205d69"
+source = "git+https://github.com/IRClichtR/nym-forked?branch=develop#b80a3bdc2709361a4aaf9691408e2e72cc1f091a"
 dependencies = [
  "celes",
  "humantime-serde",
@@ -4398,8 +4290,7 @@ dependencies = [
 [[package]]
 name = "nym-noise"
 version = "1.21.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "dec0b3d48d18df3d2d6b27c2fc70f462e870833aba30fcbe5541f414755040f3"
+source = "git+https://github.com/IRClichtR/nym-forked?branch=develop#b80a3bdc2709361a4aaf9691408e2e72cc1f091a"
 dependencies = [
  "arc-swap",
  "bytes",
@@ -4420,8 +4311,7 @@ dependencies = [
 [[package]]
 name = "nym-noise-keys"
 version = "1.21.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "fa5335b8f7e6504933696c5ec008bdac580e8dc1645f11967bc9bfb2422f62c6"
+source = "git+https://github.com/IRClichtR/nym-forked?branch=develop#b80a3bdc2709361a4aaf9691408e2e72cc1f091a"
 dependencies = [
  "nym-crypto",
  "schemars",
@@ -4432,8 +4322,7 @@ dependencies = [
 [[package]]
 name = "nym-nonexhaustive-delayqueue"
 version = "1.21.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7bd68af91a6985ecccd6ffff252be5d8ae5e2734c0f25275af73f1356aa6f368"
+source = "git+https://github.com/IRClichtR/nym-forked?branch=develop#b80a3bdc2709361a4aaf9691408e2e72cc1f091a"
 dependencies = [
  "tokio",
  "tokio-stream",
@@ -4444,8 +4333,7 @@ dependencies = [
 [[package]]
 name = "nym-ordered-buffer"
 version = "1.21.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "dcddd0cae4cd4c82002418e3d8f4c929d16359b301cc3d1fb116e32cdeafd247"
+source = "git+https://github.com/IRClichtR/nym-forked?branch=develop#b80a3bdc2709361a4aaf9691408e2e72cc1f091a"
 dependencies = [
  "log",
  "thiserror 2.0.18",
@@ -4454,11 +4342,10 @@ dependencies = [
 [[package]]
 name = "nym-outfox"
 version = "1.21.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b05fe13189535ea781c024cc19d2b966403d8bdff0acb8fc95a29f18cbe63081"
+source = "git+https://github.com/IRClichtR/nym-forked?branch=develop#b80a3bdc2709361a4aaf9691408e2e72cc1f091a"
 dependencies = [
  "blake3",
- "chacha20",
+ "chacha20 0.9.1",
  "chacha20poly1305",
  "sphinx-packet",
  "thiserror 2.0.18",
@@ -4469,8 +4356,7 @@ dependencies = [
 [[package]]
 name = "nym-pemstore"
 version = "1.21.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d8a65feca879c8b0556a525cc0dc996bafcfe2c1bad78c5990f464629e85b26c"
+source = "git+https://github.com/IRClichtR/nym-forked?branch=develop#b80a3bdc2709361a4aaf9691408e2e72cc1f091a"
 dependencies = [
  "pem",
  "tracing",
@@ -4480,8 +4366,7 @@ dependencies = [
 [[package]]
 name = "nym-performance-contract-common"
 version = "1.21.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c6e47f2a04d8b0e1c492cdd7dcfc98face5efc2a4cb999c03887a5b77e4cf055"
+source = "git+https://github.com/IRClichtR/nym-forked?branch=develop#b80a3bdc2709361a4aaf9691408e2e72cc1f091a"
 dependencies = [
  "cosmwasm-schema",
  "cosmwasm-std",
@@ -4495,8 +4380,7 @@ dependencies = [
 [[package]]
 name = "nym-sdk"
 version = "1.21.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f020244e6068f8b5496f6ddaaeb30b7998061b368370c071b10bffeddd2b0bfc"
+source = "git+https://github.com/IRClichtR/nym-forked?branch=develop#b80a3bdc2709361a4aaf9691408e2e72cc1f091a"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -4522,7 +4406,7 @@ dependencies = [
  "nym-gateway-requests",
  "nym-http-api-client",
  "nym-ip-packet-requests",
- "nym-lp",
+ "nym-lp-data",
  "nym-network-defaults",
  "nym-ordered-buffer",
  "nym-service-providers-common",
@@ -4554,8 +4438,7 @@ dependencies = [
 [[package]]
 name = "nym-serde-helpers"
 version = "1.21.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "12d0cae9cc66e361c186c47531a0d66584d0c7314ece2cfa72c3a9ee9f1b33fa"
+source = "git+https://github.com/IRClichtR/nym-forked?branch=develop#b80a3bdc2709361a4aaf9691408e2e72cc1f091a"
 dependencies = [
  "base64 0.22.1",
  "bs58",
@@ -4567,8 +4450,7 @@ dependencies = [
 [[package]]
 name = "nym-service-provider-requests-common"
 version = "1.21.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "48598fa173a80445b60eb3a55fde4b37af5bfe70420b0c779a4c18af1f1b72e7"
+source = "git+https://github.com/IRClichtR/nym-forked?branch=develop#b80a3bdc2709361a4aaf9691408e2e72cc1f091a"
 dependencies = [
  "serde",
  "thiserror 2.0.18",
@@ -4577,8 +4459,7 @@ dependencies = [
 [[package]]
 name = "nym-service-providers-common"
 version = "1.21.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4edc4b874fae2cbb90e6d3640abaecc61adbf3c6ee52a5f4aebb8d08bfcb8b7d"
+source = "git+https://github.com/IRClichtR/nym-forked?branch=develop#b80a3bdc2709361a4aaf9691408e2e72cc1f091a"
 dependencies = [
  "async-trait",
  "log",
@@ -4592,8 +4473,7 @@ dependencies = [
 [[package]]
 name = "nym-socks5-client-core"
 version = "1.21.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e420ee23dfdfc421c47fab8d55db8ee1f8834d777c7f25d186fb601831845342"
+source = "git+https://github.com/IRClichtR/nym-forked?branch=develop#b80a3bdc2709361a4aaf9691408e2e72cc1f091a"
 dependencies = [
  "anyhow",
  "dirs",
@@ -4626,8 +4506,7 @@ dependencies = [
 [[package]]
 name = "nym-socks5-proxy-helpers"
 version = "1.21.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ec433492fc4148780ba7247b2ae06548690f875bf70156c6073772ec9070122b"
+source = "git+https://github.com/IRClichtR/nym-forked?branch=develop#b80a3bdc2709361a4aaf9691408e2e72cc1f091a"
 dependencies = [
  "bytes",
  "futures",
@@ -4642,8 +4521,7 @@ dependencies = [
 [[package]]
 name = "nym-socks5-requests"
 version = "1.21.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "989f132a90275241f16ff3541436b1a6ef015d238228d6f54af0cd67cbfb0668"
+source = "git+https://github.com/IRClichtR/nym-forked?branch=develop#b80a3bdc2709361a4aaf9691408e2e72cc1f091a"
 dependencies = [
  "bincode",
  "log",
@@ -4659,8 +4537,7 @@ dependencies = [
 [[package]]
 name = "nym-sphinx"
 version = "1.21.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "325213f121a33e62cd753005bfdd615dd8f181140a040928d4d651e583681a59"
+source = "git+https://github.com/IRClichtR/nym-forked?branch=develop#b80a3bdc2709361a4aaf9691408e2e72cc1f091a"
 dependencies = [
  "nym-crypto",
  "nym-metrics",
@@ -4686,8 +4563,7 @@ dependencies = [
 [[package]]
 name = "nym-sphinx-acknowledgements"
 version = "1.21.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a2e77e52f628dfa6dbf8dc30365c821dd90a4996e8ad8c80ed598999563f4ee0"
+source = "git+https://github.com/IRClichtR/nym-forked?branch=develop#b80a3bdc2709361a4aaf9691408e2e72cc1f091a"
 dependencies = [
  "nym-crypto",
  "nym-pemstore",
@@ -4704,8 +4580,7 @@ dependencies = [
 [[package]]
 name = "nym-sphinx-addressing"
 version = "1.21.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c50d2d792b67c0d08d822556e9ae6271f0869ff616db0120eccab57498f2050e"
+source = "git+https://github.com/IRClichtR/nym-forked?branch=develop#b80a3bdc2709361a4aaf9691408e2e72cc1f091a"
 dependencies = [
  "nym-crypto",
  "nym-sphinx-types",
@@ -4716,8 +4591,7 @@ dependencies = [
 [[package]]
 name = "nym-sphinx-anonymous-replies"
 version = "1.21.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3b920a502a78d31004e820452cc9195bb2171e6fb32250ed188089317d1d0a8c"
+source = "git+https://github.com/IRClichtR/nym-forked?branch=develop#b80a3bdc2709361a4aaf9691408e2e72cc1f091a"
 dependencies = [
  "bs58",
  "nym-crypto",
@@ -4735,8 +4609,7 @@ dependencies = [
 [[package]]
 name = "nym-sphinx-chunking"
 version = "1.21.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3ff87eef33fe2adb39822b9cc9ac54e1fd28af7b921385babf85dc2d6a2c4c78"
+source = "git+https://github.com/IRClichtR/nym-forked?branch=develop#b80a3bdc2709361a4aaf9691408e2e72cc1f091a"
 dependencies = [
  "dashmap",
  "log",
@@ -4755,8 +4628,7 @@ dependencies = [
 [[package]]
 name = "nym-sphinx-cover"
 version = "1.21.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "fd389375b80adf2de6d541f10b15410637290790fc8c4186901c67590bd0cf6b"
+source = "git+https://github.com/IRClichtR/nym-forked?branch=develop#b80a3bdc2709361a4aaf9691408e2e72cc1f091a"
 dependencies = [
  "nym-crypto",
  "nym-sphinx-acknowledgements",
@@ -4774,8 +4646,7 @@ dependencies = [
 [[package]]
 name = "nym-sphinx-forwarding"
 version = "1.21.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4063b6085a13231d2a2050b2f9deb54f6ad30a9e86169fda7cab4fa822a3cbbd"
+source = "git+https://github.com/IRClichtR/nym-forked?branch=develop#b80a3bdc2709361a4aaf9691408e2e72cc1f091a"
 dependencies = [
  "nym-sphinx-addressing",
  "nym-sphinx-anonymous-replies",
@@ -4787,8 +4658,7 @@ dependencies = [
 [[package]]
 name = "nym-sphinx-framing"
 version = "1.21.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "360b760b80868b11fad725babf285115816cc86a6055ec3bc55cfade44fe4f79"
+source = "git+https://github.com/IRClichtR/nym-forked?branch=develop#b80a3bdc2709361a4aaf9691408e2e72cc1f091a"
 dependencies = [
  "bytes",
  "cfg-if",
@@ -4805,8 +4675,7 @@ dependencies = [
 [[package]]
 name = "nym-sphinx-params"
 version = "1.21.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ae5d0cd4265210cd35ba94e20039cdc0b8a6fbdce9e4a4b6cc4e5814192abe4e"
+source = "git+https://github.com/IRClichtR/nym-forked?branch=develop#b80a3bdc2709361a4aaf9691408e2e72cc1f091a"
 dependencies = [
  "nym-crypto",
  "nym-sphinx-types",
@@ -4817,8 +4686,7 @@ dependencies = [
 [[package]]
 name = "nym-sphinx-routing"
 version = "1.21.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e26e455573d772e317c41fd938dd485ea40ff18779c2cb1052d527f9243c10bb"
+source = "git+https://github.com/IRClichtR/nym-forked?branch=develop#b80a3bdc2709361a4aaf9691408e2e72cc1f091a"
 dependencies = [
  "nym-sphinx-addressing",
  "nym-sphinx-types",
@@ -4828,8 +4696,7 @@ dependencies = [
 [[package]]
 name = "nym-sphinx-types"
 version = "1.21.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9a702d72fc8f6d95f8606a718e40cf484a6bc6654d384ada47fdce7327a8fa9e"
+source = "git+https://github.com/IRClichtR/nym-forked?branch=develop#b80a3bdc2709361a4aaf9691408e2e72cc1f091a"
 dependencies = [
  "nym-outfox",
  "sphinx-packet",
@@ -4839,8 +4706,7 @@ dependencies = [
 [[package]]
 name = "nym-sqlx-pool-guard"
 version = "1.21.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ba0231b602b7c7b5e4f4a42fef6293c0edab700809db78ff5bdb82b34b694053"
+source = "git+https://github.com/IRClichtR/nym-forked?branch=develop#b80a3bdc2709361a4aaf9691408e2e72cc1f091a"
 dependencies = [
  "proc_pidinfo",
  "sqlx",
@@ -4852,8 +4718,7 @@ dependencies = [
 [[package]]
 name = "nym-statistics-common"
 version = "1.21.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0e0c4986a91a25941facd5e5cc8e2ebaa145bd2952b986a7a34a01690c82e283"
+source = "git+https://github.com/IRClichtR/nym-forked?branch=develop#b80a3bdc2709361a4aaf9691408e2e72cc1f091a"
 dependencies = [
  "futures",
  "log",
@@ -4878,8 +4743,7 @@ dependencies = [
 [[package]]
 name = "nym-task"
 version = "1.21.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b8c9e6b24278548a76c72529a3908fd9a5ceb79b092b71f92e3986386caf9833"
+source = "git+https://github.com/IRClichtR/nym-forked?branch=develop#b80a3bdc2709361a4aaf9691408e2e72cc1f091a"
 dependencies = [
  "cfg-if",
  "futures",
@@ -4896,8 +4760,7 @@ dependencies = [
 [[package]]
 name = "nym-ticketbooks-merkle"
 version = "1.21.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d646dd72aa85684f43e86cb8fe086d5d9a44669d83d2ede8c12651d7bf2a5ec9"
+source = "git+https://github.com/IRClichtR/nym-forked?branch=develop#b80a3bdc2709361a4aaf9691408e2e72cc1f091a"
 dependencies = [
  "nym-credentials-interface",
  "nym-serde-helpers",
@@ -4912,8 +4775,7 @@ dependencies = [
 [[package]]
 name = "nym-topology"
 version = "1.21.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "346d3b6c915a53b6590532c7620ab614214c067a029d32ddcacbb29ddbde79a8"
+source = "git+https://github.com/IRClichtR/nym-forked?branch=develop#b80a3bdc2709361a4aaf9691408e2e72cc1f091a"
 dependencies = [
  "async-trait",
  "nym-api-requests",
@@ -4933,8 +4795,7 @@ dependencies = [
 [[package]]
 name = "nym-upgrade-mode-check"
 version = "1.21.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "10ee4cdcd86b829d74741b21605e4651a1cbd225397b96a580695da3076b266c"
+source = "git+https://github.com/IRClichtR/nym-forked?branch=develop#b80a3bdc2709361a4aaf9691408e2e72cc1f091a"
 dependencies = [
  "jwt-simple",
  "nym-crypto",
@@ -4951,8 +4812,7 @@ dependencies = [
 [[package]]
 name = "nym-validator-client"
 version = "1.21.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "54255535712cf9bbca2d7783aa100de96ccac83a339fa4335cfd99c2688ede73"
+source = "git+https://github.com/IRClichtR/nym-forked?branch=develop#b80a3bdc2709361a4aaf9691408e2e72cc1f091a"
 dependencies = [
  "async-trait",
  "base64 0.22.1",
@@ -4981,6 +4841,8 @@ dependencies = [
  "nym-mixnet-contract-common",
  "nym-multisig-contract-common",
  "nym-network-defaults",
+ "nym-network-monitors-contract-common",
+ "nym-node-families-contract-common",
  "nym-performance-contract-common",
  "nym-serde-helpers",
  "nym-vesting-contract-common",
@@ -5002,8 +4864,7 @@ dependencies = [
 [[package]]
 name = "nym-vesting-contract-common"
 version = "1.21.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "af0179bfbb30551414277ca7bed631d48f3321df7b18e3032f23f2f111a577d7"
+source = "git+https://github.com/IRClichtR/nym-forked?branch=develop#b80a3bdc2709361a4aaf9691408e2e72cc1f091a"
 dependencies = [
  "cosmwasm-schema",
  "cosmwasm-std",
@@ -5016,8 +4877,7 @@ dependencies = [
 [[package]]
 name = "nym-wasm-utils"
 version = "1.21.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d2e3fb32b31b303c5a0b1ddd04c5b2ababa9544f1b4e52143a79ecb65d090720"
+source = "git+https://github.com/IRClichtR/nym-forked?branch=develop#b80a3bdc2709361a4aaf9691408e2e72cc1f091a"
 dependencies = [
  "futures",
  "getrandom 0.2.17",
@@ -5032,8 +4892,7 @@ dependencies = [
 [[package]]
 name = "nym-wireguard-types"
 version = "1.21.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "bf27f5110ea41eb4c7dcb02bfd5d613b2cb7ddfb96f8506355a16d98106abfd5"
+source = "git+https://github.com/IRClichtR/nym-forked?branch=develop#b80a3bdc2709361a4aaf9691408e2e72cc1f091a"
 dependencies = [
  "base64 0.22.1",
  "nym-crypto",
@@ -5049,7 +4908,7 @@ version = "0.3.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "2a180dd8642fa45cdb7dd721cd4c11b1cadd4929ce112ebd8b9f5803cc79d536"
 dependencies = [
- "bitflags 2.11.1",
+ "bitflags 2.13.0",
 ]
 
 [[package]]
@@ -5434,7 +5293,7 @@ dependencies = [
  "cobs",
  "embedded-io 0.4.0",
  "embedded-io 0.6.1",
- "heapless 0.7.17",
+ "heapless",
  "serde",
 ]
 
@@ -5460,6 +5319,17 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "85eae3c4ed2f50dcfe72643da4befc30deadb458a9b590d720cde2f2b1e97da9"
 dependencies = [
  "zerocopy",
+]
+
+[[package]]
+name = "prefix-trie"
+version = "0.8.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4cf6e3177f0684016a5c209b00882e15f8bdd3f3bb48f0491df10cd102d0c6e7"
+dependencies = [
+ "either",
+ "ipnet",
+ "num-traits",
 ]
 
 [[package]]
@@ -5607,7 +5477,7 @@ dependencies = [
  "quinn-udp",
  "rustc-hash",
  "rustls 0.23.40",
- "socket2 0.6.3",
+ "socket2 0.6.4",
  "thiserror 2.0.18",
  "tokio",
  "tracing",
@@ -5645,7 +5515,7 @@ dependencies = [
  "cfg_aliases",
  "libc",
  "once_cell",
- "socket2 0.6.3",
+ "socket2 0.6.4",
  "tracing",
  "windows-sys 0.60.2",
 ]
@@ -5690,6 +5560,17 @@ checksum = "6db2770f06117d490610c7488547d543617b21bfa07796d7a12f6f1bd53850d1"
 dependencies = [
  "rand_chacha 0.9.0",
  "rand_core 0.9.5",
+]
+
+[[package]]
+name = "rand"
+version = "0.10.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d2e8e8bcc7961af1fdac401278c6a831614941f6164ee3bf4ce61b7edb162207"
+dependencies = [
+ "chacha20 0.10.0",
+ "getrandom 0.4.2",
+ "rand_core 0.10.1",
 ]
 
 [[package]]
@@ -5772,16 +5653,16 @@ version = "0.5.18"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ed2bf2547551a7053d6fdfafda3f938979645c44812fbfcda098faae3f1a362d"
 dependencies = [
- "bitflags 2.11.1",
+ "bitflags 2.13.0",
 ]
 
 [[package]]
 name = "redox_syscall"
-version = "0.8.0"
+version = "0.8.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7c7591fa2c6b601dfcfe5f043f65a1c39fcdf50efefcd7f1572e538c1f4b398d"
+checksum = "5b44b894f2a6e36457d665d1e08c3866add6ed5e70050c1b4ba8a8ddedb02ce7"
 dependencies = [
- "bitflags 2.11.1",
+ "bitflags 2.13.0",
 ]
 
 [[package]]
@@ -5854,7 +5735,7 @@ dependencies = [
  "serde_json",
  "serde_urlencoded",
  "sync_wrapper 0.1.2",
- "system-configuration",
+ "system-configuration 0.5.1",
  "tokio",
  "tokio-rustls 0.24.1",
  "tower-service",
@@ -5877,7 +5758,7 @@ dependencies = [
  "http 1.4.1",
  "http-body 1.0.1",
  "http-body-util",
- "hyper 1.10.0",
+ "hyper 1.10.1",
  "hyper-rustls 0.27.9",
  "hyper-util",
  "js-sys",
@@ -6011,7 +5892,7 @@ version = "1.1.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b6fe4565b9518b83ef4f91bb47ce29620ca828bd32cb7e408f0062e9930ba190"
 dependencies = [
- "bitflags 2.11.1",
+ "bitflags 2.13.0",
  "errno",
  "libc",
  "linux-raw-sys",
@@ -6060,9 +5941,9 @@ dependencies = [
 
 [[package]]
 name = "rustls-native-certs"
-version = "0.8.3"
+version = "0.8.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "612460d5f7bea540c490b2b6395d8e34a953e52b491accd6c86c8164c5932a63"
+checksum = "dab5152771c58876a2146916e53e35057e1a4dfa2b9df0f0305b07f611fdea4d"
 dependencies = [
  "openssl-probe 0.2.1",
  "rustls-pki-types",
@@ -6101,7 +5982,7 @@ dependencies = [
  "log",
  "once_cell",
  "rustls 0.23.40",
- "rustls-native-certs 0.8.3",
+ "rustls-native-certs 0.8.4",
  "rustls-platform-verifier-android",
  "rustls-webpki 0.103.13",
  "security-framework 3.7.0",
@@ -6248,7 +6129,7 @@ version = "2.11.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "897b2245f0b511c87893af39b033e5ca9cce68824c4d7e7630b5a1d339658d02"
 dependencies = [
- "bitflags 2.11.1",
+ "bitflags 2.13.0",
  "core-foundation 0.9.4",
  "core-foundation-sys",
  "libc",
@@ -6261,7 +6142,7 @@ version = "3.7.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b7f4bc775c73d9a02cde8bf7b2ec4c9d12743edf609006c7facc23998404cd1d"
 dependencies = [
- "bitflags 2.11.1",
+ "bitflags 2.13.0",
  "core-foundation 0.10.1",
  "core-foundation-sys",
  "libc",
@@ -6472,22 +6353,12 @@ dependencies = [
 
 [[package]]
 name = "sha3"
-version = "0.10.9"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "77fd7028345d415a4034cf8777cd4f8ab1851274233b45f84e3d955502d93874"
-dependencies = [
- "digest 0.10.7",
- "keccak 0.1.6",
-]
-
-[[package]]
-name = "sha3"
 version = "0.11.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "be176f1a57ce4e3d31c1a166222d9768de5954f811601fb7ca06fc8203905ce1"
 dependencies = [
  "digest 0.11.3",
- "keccak 0.2.0",
+ "keccak",
 ]
 
 [[package]]
@@ -6501,9 +6372,9 @@ dependencies = [
 
 [[package]]
 name = "shlex"
-version = "1.3.0"
+version = "2.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0fda2ff0d084019ba4d7c6f371c95d8fd75ce3524c3cb8fb653a3023f6323e64"
+checksum = "f8fadd59c855ef2080decdef8ff161eb6661b86933c9d82e5ba29dc602a55aba"
 
 [[package]]
 name = "si-scale"
@@ -6585,38 +6456,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "smolmix"
-version = "1.21.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "93825b7ba5871b6c5b5d1affaf81b18693243448dd9c729ed1a7536af2f7c6f2"
-dependencies = [
- "futures",
- "nym-ip-packet-requests",
- "nym-sdk",
- "smoltcp",
- "thiserror 2.0.18",
- "tokio",
- "tokio-smoltcp",
- "tracing",
-]
-
-[[package]]
-name = "smoltcp"
-version = "0.12.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "dad095989c1533c1c266d9b1e8d70a1329dd3723c3edac6d03bbd67e7bf6f4bb"
-dependencies = [
- "bitflags 1.3.2",
- "byteorder",
- "cfg-if",
- "defmt 0.3.100",
- "heapless 0.8.0",
- "libc",
- "log",
- "managed",
-]
-
-[[package]]
 name = "snow"
 version = "0.9.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -6644,9 +6483,9 @@ dependencies = [
 
 [[package]]
 name = "socket2"
-version = "0.6.3"
+version = "0.6.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3a766e1110788c36f4fa1c2b71b387a7815aa65f88ce0229841826633d93723e"
+checksum = "52d1cfed4120b4d927bf7c0f86d2087a4a7d6027c906d9f9d525a80573b9be51"
 dependencies = [
  "libc",
  "windows-sys 0.61.2",
@@ -6803,7 +6642,7 @@ checksum = "aa003f0038df784eb8fecbbac13affe3da23b45194bd57dba231c8f48199c526"
 dependencies = [
  "atoi",
  "base64 0.22.1",
- "bitflags 2.11.1",
+ "bitflags 2.13.0",
  "byteorder",
  "bytes",
  "crc",
@@ -6846,7 +6685,7 @@ checksum = "db58fcd5a53cf07c184b154801ff91347e4c30d17a3562a635ff028ad5deda46"
 dependencies = [
  "atoi",
  "base64 0.22.1",
- "bitflags 2.11.1",
+ "bitflags 2.13.0",
  "byteorder",
  "crc",
  "dotenvy",
@@ -7064,7 +6903,18 @@ checksum = "ba3a3adc5c275d719af8cb4272ea1c4a6d668a777f37e115f6d11ddbc1c8e0e7"
 dependencies = [
  "bitflags 1.3.2",
  "core-foundation 0.9.4",
- "system-configuration-sys",
+ "system-configuration-sys 0.5.0",
+]
+
+[[package]]
+name = "system-configuration"
+version = "0.7.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a13f3d0daba03132c0aa9767f98351b3488edc2c100cda2d2ec2b04f3d8d3c8b"
+dependencies = [
+ "bitflags 2.13.0",
+ "core-foundation 0.9.4",
+ "system-configuration-sys 0.6.0",
 ]
 
 [[package]]
@@ -7072,6 +6922,16 @@ name = "system-configuration-sys"
 version = "0.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a75fb188eb626b924683e3b95e3a48e63551fcfb51949de2f06a9d91dbee93c9"
+dependencies = [
+ "core-foundation-sys",
+ "libc",
+]
+
+[[package]]
+name = "system-configuration-sys"
+version = "0.6.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8e1d1b10ced5ca923a1fcb8d03e96b8d3268065d724548c0211415ff6ac6bac4"
 dependencies = [
  "core-foundation-sys",
  "libc",
@@ -7334,7 +7194,7 @@ dependencies = [
  "mio",
  "pin-project-lite",
  "signal-hook-registry",
- "socket2 0.6.3",
+ "socket2 0.6.4",
  "tokio-macros",
  "windows-sys 0.61.2",
 ]
@@ -7368,20 +7228,6 @@ checksum = "1729aa945f29d91ba541258c8df89027d5792d85a8841fb65e8bf0f4ede4ef61"
 dependencies = [
  "rustls 0.23.40",
  "tokio",
-]
-
-[[package]]
-name = "tokio-smoltcp"
-version = "0.5.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e5f5d53da1c3095663a8900d86c2abb0ffe02d3f6aa86527b066148fcb33e65e"
-dependencies = [
- "futures",
- "parking_lot",
- "pin-project-lite",
- "smoltcp",
- "tokio",
- "tokio-util",
 ]
 
 [[package]]
@@ -7543,7 +7389,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "4cfcf7e2740e6fc6d4d688b4ef00650406bb94adf4731e43c096c3a19fe40840"
 dependencies = [
  "async-compression",
- "bitflags 2.11.1",
+ "bitflags 2.13.0",
  "bytes",
  "futures-core",
  "futures-util",
@@ -7687,11 +7533,11 @@ dependencies = [
 name = "transport"
 version = "0.1.0"
 dependencies = [
+ "futures",
  "nym-bin-common",
  "nym-sdk",
  "postcard",
  "serde",
- "smolmix",
  "thiserror 2.0.18",
  "tokio",
  "tracing",
@@ -7727,9 +7573,9 @@ dependencies = [
 
 [[package]]
 name = "typenum"
-version = "1.20.0"
+version = "1.20.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "40ce102ab67701b8526c123c1bab5cbe42d7040ccfd0f64af1a385808d2f43de"
+checksum = "b6f5e870be6c3b371b77fe0ee0bafb859fa4964b4404c27de1d380043c4dda20"
 
 [[package]]
 name = "ucd-trie"
@@ -7848,9 +7694,9 @@ dependencies = [
 
 [[package]]
 name = "uuid"
-version = "1.23.1"
+version = "1.23.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ddd74a9687298c6858e9b88ec8935ec45d22e8fd5e6394fa1bd4e99a87789c76"
+checksum = "d258b83ceec21034727ecee8c382cfa6c3e133699b0742c64571814fb420c9f7"
 dependencies = [
  "getrandom 0.4.2",
  "js-sys",
@@ -8041,7 +7887,7 @@ version = "0.244.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "47b807c72e1bac69382b3a6fb3dbe8ea4c0ed87ff5629b8685ae6b9a611028fe"
 dependencies = [
- "bitflags 2.11.1",
+ "bitflags 2.13.0",
  "hashbrown 0.15.5",
  "indexmap 2.14.0",
  "semver",
@@ -8639,7 +8485,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9d66ea20e9553b30172b5e831994e35fbde2d165325bec84fc43dbf6f4eb9cb2"
 dependencies = [
  "anyhow",
- "bitflags 2.11.1",
+ "bitflags 2.13.0",
  "indexmap 2.14.0",
  "log",
  "serde",
@@ -8689,9 +8535,9 @@ dependencies = [
 
 [[package]]
 name = "yoke"
-version = "0.8.2"
+version = "0.8.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "abe8c5fda708d9ca3df187cae8bfb9ceda00dd96231bed36e445a1a48e66f9ca"
+checksum = "709fe23a0424b6a435d82152b1bd3fdfb0833487d5fa90d05d42762a9891fef5"
 dependencies = [
  "stable_deref_trait",
  "yoke-derive",
@@ -8712,18 +8558,18 @@ dependencies = [
 
 [[package]]
 name = "zerocopy"
-version = "0.8.49"
+version = "0.8.50"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "bce33a6288fa3f072a8c2c7d0f2fdbb90e28298f0135c1f99b96c3db2efcc60b"
+checksum = "3b065d4f0e55f82fae73202e189638116a87c55ab6b8e6c2721e13dd9d854ad1"
 dependencies = [
  "zerocopy-derive",
 ]
 
 [[package]]
 name = "zerocopy-derive"
-version = "0.8.49"
+version = "0.8.50"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8fd425244944f4ab65ccff928e7323354c5a018c75838362fdce749dfad2ee1e"
+checksum = "0b631b19d36a892ab55420c92dbc83ccd79274f25be714855d3074aa71cab639"
 dependencies = [
  "proc-macro2",
  "quote",
