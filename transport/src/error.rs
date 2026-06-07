@@ -23,4 +23,6 @@ pub enum TransportError {
     Disconnected,
     #[error("received message carried no anonymous sender tag (was it sent without a SURB?)")]
     MissingSenderTag,
+    #[error("smolmix error: {0}")]
+    Smolmix(#[from] smolmix::SmolmixError),
 }
