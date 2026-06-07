@@ -7,26 +7,30 @@ use tfhe::{
 /// Byte-level FHE ciphertext: each plaintext byte independently encrypted as a `FheUint8`.
 pub type FheCiphertext = Vec<FheUint8>;
 
-/// Encrypts `plaintext` under `fhe_pk` using compact batch encryption.
+/// Encrypts `plaintext` under `fhe_pk` into a compact batch ciphertext.
 ///
-/// `CompactCiphertextList` packs all bytes in one pass then expands them server-side via
-/// key-switching — far faster than per-byte `PublicKey` GLWE encryption.
-/// `server_key` is needed for the expand (key-switching) step.
-pub fn encrypt(
-    plaintext: &[u8],
-    fhe_pk: &FhePublicKey,
-    server_key: &FheServerKey,
-) -> FheCiphertext {
-    tfhe::set_server_key(server_key.clone());
+/// Called by the sender (A) — requires only the public key.
+/// The resulting `CompactCiphertextList` must be expanded server-side via `expand`.
+pub fn encrypt_compact(plaintext: &[u8], fhe_pk: &FhePublicKey) -> CompactCiphertextList {
     let mut builder = CompactCiphertextList::builder(fhe_pk);
     for &byte in plaintext {
         builder.push(byte);
     }
-    let compact_list = builder.build();
-    let expander = compact_list.expand().unwrap();
-    (0..plaintext.len())
-        .map(|i| expander.get::<FheUint8>(i).unwrap().unwrap())
-        .collect()
+    builder.build()
+}
+
+/// Expands a compact ciphertext into an evaluable `FheCiphertext`.
+///
+/// Called by the server/relayer — requires `server_key` for the key-switching step.
+/// `len` must match the number of bytes originally encrypted.
+pub fn expand(
+    compact: &CompactCiphertextList,
+    server_key: &FheServerKey,
+    len: usize,
+) -> FheCiphertext {
+    tfhe::set_server_key(server_key.clone());
+    let expander = compact.expand().unwrap();
+    (0..len).map(|i| expander.get::<FheUint8>(i).unwrap().unwrap()).collect()
 }
 
 /// Decrypts `ciphertext` byte-by-byte; only the holder of `fhe_sk` can call this.
@@ -67,10 +71,11 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_encrypt_decrypt() {
+    fn test_encrypt_expand_decrypt() {
         let keys = FHEKeys::new();
         let plaintext = b"Hello, FHE!";
-        let ciphertext = encrypt(plaintext, &keys.public_key, &keys.server_key);
+        let compact = encrypt_compact(plaintext, &keys.public_key);
+        let ciphertext = expand(&compact, &keys.server_key, plaintext.len());
         let decrypted = decrypt(&ciphertext, &keys.secret_key);
         assert_eq!(plaintext.to_vec(), decrypted);
     }
@@ -79,7 +84,8 @@ mod tests {
     fn test_evaluate() {
         let keys = FHEKeys::new();
         let plaintext = b"Hello, FHE!";
-        let ciphertext = encrypt(plaintext, &keys.public_key, &keys.server_key);
+        let compact = encrypt_compact(plaintext, &keys.public_key);
+        let ciphertext = expand(&compact, &keys.server_key, plaintext.len());
         let evaluated_ciphertext = evaluate(&ciphertext, &keys.server_key);
         let decrypted = decrypt(&evaluated_ciphertext, &keys.secret_key);
         let expected: Vec<u8> = plaintext.iter().map(|&b| b + 1).collect();
