@@ -5,27 +5,28 @@
 This project has two concurrent goals:
 
 **1. Test the new Nym SDK transport primitives in a real-world scenario.**
-The recently released `smolmix` layer exposes standard `TcpStream` and `UdpSocket`
-types that route all traffic through the Nym mixnet transparently. This project
-uses that layer as the body transport between clients and the relayer, exercising
-the SDK under realistic conditions — variable payload sizes, concurrent connections,
-reconnection behavior — rather than in a toy demo.
+The recently released `smolmix` layer exposes standard `TcpStream` types that
+route all traffic through the Nym mixnet transparently. This project exercises
+both the `smolmix` TCP path and the native Nym SURB path under realistic
+conditions — variable payload sizes, concurrent connections, anonymous reply
+channels — rather than in a toy demo.
 
 **2. Build a theoretically sound private message relay using FHE primitives.**
 Fully Homomorphic Encryption ensures message content remains opaque to every
-party except the intended recipient. On-chain commitments provide censorship-resistant
-ordering and proof of relay. Together they implement a public/private register:
-the chain is fully public (anyone can observe that the system is being used) but
-completely opaque (no observer can learn who is communicating with whom or what
-is being exchanged).
+party except the intended recipient. On-chain commitments provide
+censorship-resistant ordering and proof of relay. Together they implement a
+public/private register: the chain is fully public (anyone can observe that the
+system is being used) but completely opaque (no observer can learn who is
+communicating with whom or what is being exchanged).
 
 ---
 
 ## Threat Model
 
-The system protects the **communication graph**. An adversary watching both chains
-and the Nym network simultaneously should learn nothing about which sender is
-communicating with which recipient — only that the system is being used.
+The system protects the **communication graph**. An adversary watching both
+chains and the Nym network simultaneously should learn nothing about which
+sender is communicating with which recipient — only that the system is being
+used.
 
 | Adversary | Capability | Protected property |
 |---|---|---|
@@ -34,69 +35,101 @@ communicating with which recipient — only that the system is being used.
 | Relayer | Sees Nym packets and both chains | Cannot link a src event to a dst event |
 | Anyone | Full access to dst chain | Cannot recognize a message without the shared secret |
 
-**Out of scope:** shared secret establishment between A and B. This is assumed
-to happen out of band (a private rendezvous protocol is a separate project).
+**Out of scope:** shared secret and static keypair establishment between A and B.
+This is assumed to happen out of band.
 
 ---
 
 ## Architecture
 
-### Primitives
+### Key Setup (out of band)
 
 ```
-Client A          Src Chain          Relayer           Dst Chain         Client B
-   |                  |                 |                  |                 |
-   |-- stealth tag -->|                 |                  |                 |
-   |                  |<--- watching ---|                  |                 |
-   |                  |--- tag event -->|                  |                 |
-   |                  |                 |                  |                 |
-   |-------- Nym: (ciphertext, nonce, ZK proof) -------->|                  |
-   |                  |                 |-- verify --------|                 |
-   |                  |                 |-- post anon ---->|                 |
-   |                  |                 |                  |<---- scanning --|
-   |                  |                 |                  |---- recognize --|
+B generates static X25519 keypair (sk_b, pk_b)
+B generates FHE keypair (fhe_sk, fhe_pk, fhe_server_key)
+
+B ──► A:         shared_secret, pk_b, fhe_pk
+B ──► RELAYER:   fhe_server_key  (enables homomorphic evaluation)
 ```
 
-### Components
-
-**Client A**
-- Derives a stealth tag from the shared secret and a nonce via HKDF
-- Posts the tag (opaque bytes, no identity) on the src chain
-- Sends `(FHE ciphertext, nonce, ZK binding proof)` over the Nym tunnel to the relayer
-
-**Relayer**
-- Watches src chain for any tag matching the expected format (pattern match, not identity)
-- Receives Nym packets from senders
-- Verifies the ZK proof links the body to an existing on-chain tag
-- Posts anonymously to the dst chain
-- Stateless — no logging of sender identity or src/dst correlation
-
-**Client B**
-- Watches dst chain passively
-- Trial-decrypts each tag event using the shared secret
-- Recovers the FHE ciphertext when a match is found
-
-### On-chain data structure
-
-Both chains only ever hold:
+### Per-Message Key Derivation
 
 ```
-{ tag: bytes32, payload: bytes }
+A generates ephemeral keypair (ek_secret, ek_pub)
+
+stealth_input = X25519(ek_secret, pk_b)   ← B verifies with X25519(sk_b, ek_pub)
+
+IKM = shared_secret || stealth_input
+
+HKDF-SHA256(IKM, salt=nonce)
+    ├── info="fhe-relay-tag-v1"     → tag_key
+    └── info="fhe-relay-binding-v1" → binding_key
+
+tag      = HMAC-SHA256(tag_key, nonce)       ← posted on src chain
+nullifier = HMAC-SHA256(binding_key, tag)    ← replay protection at relayer
 ```
 
-No sender address. No recipient address. No metadata. The tag is a MAC over a
-nonce — meaningless without the shared secret.
-
-### Nym transport stack (smolmix)
+### Protocol Flow
 
 ```
-User code (RelayEnvelope send/recv)
+Client A           Src Chain         Relayer          Dst Chain        Client B
+   |                   |                |                  |                |
+   |-- submit(tag) --->|                |                  |                |
+   |                   |<-- watching ---|                  |                |
+   |                   |--- Submitted ->|                  |                |
+   |                                   |                  |                |
+   |-------- Nym SURB: ClientEnvelope(nonce, ek, tag, ct, proof) -------->|mailbox
+   |                               mailbox                |                |
+   |                               |-- RelayerEnvelope -->|                |
+   |                               |         |-- verify nullifier          |
+   |                               |         |-- check src chain           |
+   |                               |         |-- verify(tag) ------------>|
+   |                               |         |                  Verified   |
+   |                               |<-- VerifiedNotification --------------|
+   |                               |-- DispatchEnvelope --> dispatcher     |
+   |                               |                          |            |
+   |                               |                          |-- Nym SURB: DeliveryEnvelope -->|
+   |                               |                          |                        B decrypts
+   |                               |                          |<-- ReceivedNotification --------|
+   |                               |<-- ReceivedNotification -|            |                |
+   |                               |                          |-- received(tag) ----------->|
+```
+
+### Envelope Types
+
+All messages share a single `Envelope` tagged union serialized with `postcard`:
+
+| Variant | Direction | Key fields |
+|---|---|---|
+| `ClientEnvelope` | A → mailbox | `nonce, ek, tag, fhe_ciphertext, binding_proof, nullifier, fhe_pk` |
+| `RelayerEnvelope` | mailbox → relayer | `tag, binding_proof, nullifier, fhe_pk, fhe_ciphertext` |
+| `DispatchEnvelope` | mailbox → dispatcher | `nonce, ek, tag, fhe_ciphertext` |
+| `VerifiedNotification` | relayer → mailbox | `tag` |
+| `ReceivedNotification` | dispatcher → mailbox | `tag` |
+| `DeliveryEnvelope` | dispatcher → B | `nonce, ek, tag, fhe_ciphertext` |
+
+### Transport Layer
+
+Two Nym transport mechanisms are provided:
+
+**`SurbTransport`** — wraps `nym-sdk::MixnetClient`, uses SURBs for anonymous
+reply channels. Used on edge legs: A → mailbox, dispatcher → B. The receiver
+never learns the sender's Nym address.
+
+**`SmolmixTransport`** — routes standard TCP through the mixnet via `smolmix`.
+Returns a `TcpStream` compatible with tokio-rustls, hyper, etc. Used on
+server-side legs: mailbox ↔ relayer, mailbox ↔ dispatcher.
+
+```
+SmolmixTransport Nym stack:
+
+User code (Envelope over TcpStream)
         ↓
 tokio-smoltcp::Net
         ↓
-NymAsyncDevice  (raw IP packet adapter)
+NymAsyncDevice   (raw IP packet adapter)
         ↓
-NymIprBridge    (mixnet ↔ channel shuttle)
+NymIprBridge     (mixnet ↔ channel shuttle)
         ↓
 IpMixStream → MixnetClient → Nym mixnet → IPR exit node
 ```
@@ -106,42 +139,55 @@ IpMixStream → MixnetClient → Nym mixnet → IPR exit node
 ## Crate Layout
 
 ```
-fhe-relayer/
-├── crates/
-│   ├── primitives/     # Crypto: HKDF, stealth tags, ZK binding proof
-│   ├── chain/          # ChainWatcher and ChainPoster traits + implementations
-│   ├── transport/      # Nym tunnel setup, RelayEnvelope wire format
-│   ├── relayer/        # Core relay logic: tag matching, verify, post
-│   └── client/         # Client A (send) and Client B (scan + recognize)
-└── tests/
-    └── e2e/            # Full integration tests against local chain (Anvil)
+fhe-over-nym/
+├── crypto-primitives/
+│   └── src/
+│       ├── ecdh.rs      # X25519 keypair gen, stealth_input derivation
+│       ├── kdf.rs       # HKDF: derive_sender_keys / derive_recipient_keys
+│       ├── tag.rs       # generate_tag / recognize_tag (HMAC-SHA256)
+│       ├── nonce.rs     # NonceGenerator (OsRng, zeroized on drop)
+│       ├── proof.rs     # generate_proof / verify_proof (HMAC-based, nullifier set)
+│       ├── fhe.rs       # encrypt_compact / expand / decrypt / evaluate / FHEKeys
+│       ├── types.rs     # all key, bundle, and proof types
+│       └── error.rs     # NonceError, KdfError, TagError, ProofError
+└── transport/
+    └── src/
+        ├── envelopes.rs          # Envelope tagged union, EnvelopeCodec, WireEnvelope trait
+        ├── surb_transport.rs     # SurbTransport (send, receive_anon, reply_to_anon)
+        ├── smolmix_transport.rs  # SmolmixTransport (tcp_connect, shutdown)
+        └── error.rs              # EnvelopeError, TransportError
+```
+
+Planned crates (not yet implemented):
+
+```
+├── chain/       # ChainWatcher / ChainPoster traits, Anvil integration
+├── mailbox/     # receives from A, stores, replicates to dispatcher
+├── relayer/     # proof verify, nullifier set, posts Verified
+├── dispatcher/  # entitlement registry, delivers to B
+├── client/      # client A (send) and client B (receive + decrypt)
+└── tests/e2e/   # full flow against local L2 node
 ```
 
 ---
 
 ## Implementation Plan
 
-Each step is independently testable. No step depends on an untested previous step.
+### Step 1 — Cryptographic primitives (`crypto-primitives`) ✓
+
+- [x] ECDH: `generate_ephemeral_keypair`, `generate_static_keypair`, `compute_stealth_input`
+- [x] KDF: `derive_sender_keys(shared_secret, stealth_input, nonce)` → `tag_key + binding_key`
+      `derive_recipient_keys(...)` → `tag_key` only
+- [x] Tag: `generate_tag(tag_key, nonce)`, `recognize_tag`
+- [x] Nonce: `NonceGenerator` (OsRng, zeroized on drop)
+- [x] Proof: `generate_proof` (64-byte HMAC blob), `verify_proof` (nullifier set check)
+- [x] FHE: `encrypt_compact`, `expand`, `decrypt`, `evaluate`, `FHEKeys`
+
+**Remaining**: replace HMAC-based binding proof with a real ZK proof (Groth16).
 
 ---
 
-### Step 1 — Cryptographic primitives (`crates/primitives`)
-
-Everything else derives from these. Establish and test in complete isolation.
-
-- HKDF derivation: `shared_secret → tag_key + binding_key`
-- Tag generation: `HMAC(tag_key, nonce) → [u8; 32]`
-- Tag recognition: given shared secret + nonce, B can verify a tag
-- Nonce scheme: generation and uniqueness guarantees
-
-**Tests**
-- Unit: `derive → tag → recognize` round trips correctly
-- Property: a wrong secret never recognizes a valid tag
-- Property: two different nonces never produce the same tag
-
----
-
-### Step 2 — Chain interface (`crates/chain`)
+### Step 2 — Chain interface (`chain`) — not started
 
 Define the chain boundary as a trait before touching any real node.
 
@@ -151,121 +197,57 @@ trait ChainWatcher {
 }
 
 trait ChainPoster {
-    async fn post(&self, tag: [u8; 32], payload: Vec<u8>) -> TxHash;
+    async fn post(&self, tag: [u8; 32]) -> TxHash;
 }
 ```
 
-Implement with an in-memory mock first. Then implement against Anvil (local EVM node).
-
-**Tests**
-- Unit: mock watcher emits events, mock poster records calls, trait contract holds
-- Integration: post a tag on Anvil, assert watcher picks it up within N blocks
-- Integration: assert no sender address appears in the on-chain event
+Implement with an in-memory mock first. Then implement against Anvil.
 
 ---
 
-### Step 3 — Nym transport layer (`crates/transport`)
+### Step 3 — Nym transport layer (`transport`) ✓
 
-Integrate smolmix. Build the simplest possible thing: relayer opens a Nym
-listener, client connects and sends raw bytes, relayer receives them. No crypto,
-no chain — just reliable byte transport through the mixnet.
-
-**Tests**
-- Loopback: send 1000 random payloads of varying size, assert all arrive intact
-- Stress: concurrent senders, assert no cross-contamination
-- Reconnection: drop and re-establish tunnel, assert delivery resumes
+- [x] `SurbTransport`: send with SURB, `receive_anon`, `reply_to_anon`
+- [x] `SmolmixTransport`: TCP-over-Nym tunnel, `tcp_connect`
+- [x] IP masking verified: Cloudflare reports a different IP when routed through smolmix
 
 ---
 
-### Step 4 — Message envelope (`crates/transport`)
+### Step 4 — Message envelope (`transport`) ✓
 
-Define and test the wire format for what A sends over Nym.
-
-```rust
-struct RelayEnvelope {
-    nonce:           [u8; 32],
-    tag:             [u8; 32],   // must match the on-chain commitment
-    fhe_ciphertext:  Vec<u8>,
-    binding_proof:   Vec<u8>,    // stubbed as empty bytes for now
-}
-```
-
-Serialize with `postcard`. The binding proof field is a stub — it carries bytes
-but is not yet verified.
-
-**Tests**
-- Round trip: serialize → deserialize produces identical struct
-- Transport: send envelope over Nym tunnel from step 3, assert relayer receives
-  and deserializes correctly
-- Rejection: malformed bytes are rejected cleanly, no panic
+- [x] `Envelope` tagged union with 6 variants
+- [x] `EnvelopeCodec`: postcard encode/decode through the tagged union
+- [x] `WireEnvelope` trait: `into_envelope` / `from_envelope` with `KindMismatch` on wrong variant
+- [x] Round-trip and variant-distinguishability tests
 
 ---
 
-### Step 5 — Relayer core logic without ZK (`crates/relayer`)
+### Step 5 — Relayer core logic (`relayer`) — not started
 
-Wire chain watcher + Nym receiver together. The relayer maintains a pending set
-of tags seen on the src chain. When an envelope arrives, it checks the tag is in
-the pending set, posts to dst chain, and removes the tag. Unmatched tags are
-dropped silently.
-
-**Tests**
-- Integration (mock chains): A posts tag, sends envelope, assert relayer posts
-  correct payload on dst chain
-- Drop: envelope with unknown tag is dropped, nothing posted on dst chain
-- Replay: same tag used twice, second envelope dropped after first succeeds
-- Ordering: multiple in-flight messages, assert all arrive on dst chain
+Wire chain watcher + Nym receiver. Maintain pending tag set, verify nullifier,
+post Verified on dst chain, send `VerifiedNotification` to mailbox.
 
 ---
 
-### Step 6 — ZK binding proof (`crates/primitives`)
+### Step 6 — ZK binding proof (`crypto-primitives`) — not started
 
-Add the actual proof. The ZK statement:
+Replace HMAC-based proof with Groth16 (arkworks) or Bulletproofs. Statement:
 
 > I know a nonce such that `HMAC(tag_key, nonce) == tag`, where `tag_key` is
 > derived from a secret I know, without revealing the secret or the nonce.
 
-Circuit: Groth16 with arkworks (small proof size, fast verify) or Bulletproofs
-(no trusted setup). Choose based on proof size budget for the on-chain payload.
+---
 
-Integrate into the relayer: envelopes with invalid proofs are rejected before
-tag lookup. Add a nullifier to prevent proof replay.
+### Step 7 — Client B recognition (`client`) — not started
 
-**Tests**
-- Unit: valid proof verifies, tampered proof fails, wrong key fails
-- Unit: replayed proof (same nullifier) rejected
-- Integration: plug into relayer from step 5, assert end-to-end still passes
-- Negative: envelope with stubbed empty proof now rejected
+B receives `DeliveryEnvelope`, re-derives `stealth_input` from `sk_b` and `ek`,
+re-derives `tag_key`, verifies tag, decrypts ciphertext with `fhe_sk`.
 
 ---
 
-### Step 7 — Client B recognition (`crates/client`)
+### Step 8 — End to end (`tests/e2e`) — not started
 
-B scans dst chain events and trial-decrypts each tag using the shared secret.
-On a match, recovers the FHE ciphertext.
-
-**Tests**
-- Post N dummy tag events + 1 real event on mock dst chain
-- Assert B finds exactly one match
-- Assert B recovers the correct ciphertext
-- Assert B ignores all dummy events without error
-
----
-
-### Step 8 — End to end (`tests/e2e`)
-
-Full flow with all real components. Chain layer uses Anvil. Nym layer uses
-smolmix against a local mixnet node or the Nym testnet.
-
-```
-A → src chain (Anvil) + Nym tunnel → Relayer → dst chain (Anvil) → B
-```
-
-**Tests**
-- Full scenario: A sends, B receives correct ciphertext
-- Unlinkability audit: capture everything the relayer logs, verify it cannot
-  reconstruct the A↔B pair from its own data
-- Noise: inject dummy traffic on both chains, assert B still finds its message
-- Latency: measure and document mixnet overhead as a baseline for the Nym SDK
+Full flow with Anvil chains and local Nym mixnet or testnet.
 
 ---
 
@@ -273,24 +255,26 @@ A → src chain (Anvil) + Nym tunnel → Relayer → dst chain (Anvil) → B
 
 | Crate | Purpose |
 |---|---|
-| `nym-sdk` / `smolmix` | Mixnet transport |
-| `arkworks` | ZK proof system (Groth16) |
-| `tfhe-rs` | FHE primitives |
-| `alloy` | EVM chain interaction |
-| `tokio` | Async runtime |
+| `nym-sdk` | Native Nym mixnet client (SurbTransport) |
+| `smolmix` | TCP-over-Nym transport (SmolmixTransport) |
+| `tfhe` | FHE: CompactPublicKey, ServerKey, ClientKey, FheUint8, integer feature |
+| `x25519-dalek` | X25519 ECDH (stealth input derivation) |
+| `hkdf` + `hmac` + `sha2` | Key derivation and tag/proof MAC |
+| `zeroize` | Nonce zeroization on drop |
 | `postcard` | Wire format serialization |
-| `hkdf` + `hmac` | Key derivation and tag MAC |
-| `anvil` (dev) | Local EVM node for integration tests |
+| `alloy` (planned) | EVM chain interaction, event watching |
+| `tokio` | Async runtime |
+| `anvil` (dev, planned) | Local EVM node for integration tests |
 
 ---
 
 ## Status
 
-- [ ] Step 1 — Cryptographic primitives
+- [x] Step 1 — Cryptographic primitives (ECDH, KDF, tag, nonce, HMAC proof, FHE)
 - [ ] Step 2 — Chain interface
-- [ ] Step 3 — Nym transport layer
-- [ ] Step 4 — Message envelope
+- [x] Step 3 — Nym transport layer (SurbTransport + SmolmixTransport)
+- [x] Step 4 — Message envelope (Envelope tagged union, EnvelopeCodec)
 - [ ] Step 5 — Relayer core logic
-- [ ] Step 6 — ZK binding proof
+- [ ] Step 6 — ZK binding proof (currently HMAC-based placeholder)
 - [ ] Step 7 — Client B recognition
 - [ ] Step 8 — End to end
