@@ -1,5 +1,7 @@
 # Architecture
 
+/!\ OUT OF DATE DOCUMENT
+
 ## Overview
 
 A private document relay system. The chain is a public state register — anyone
@@ -394,17 +396,7 @@ three-way collusion to expose.
 ---
 
 ## Latency Budget
-
-```
-Nym packet latency          ~1–5s    (cover traffic, mixing delays)
-L2 block confirmation       ~2s      (Base / Optimism)
-Ciphertext replication      ~1–5s    (Nym tunnel, mailbox → dispatcher)
-Delivery to B               ~1–5s    (Nym tunnel, dispatcher → B)
-
-Total expected latency      ~5–15s   happy path
-Bottleneck                  L2 confirmation + Nym mixing
-```
-
+todo
 ---
 
 ## Known Gaps (POC Scope)
