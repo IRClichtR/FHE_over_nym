@@ -117,22 +117,8 @@ reply channels. Used on edge legs: A → mailbox, dispatcher → B. The receiver
 never learns the sender's Nym address.
 
 **`SmolmixTransport`** — routes standard TCP through the mixnet via `smolmix`.
-Returns a `TcpStream` compatible with tokio-rustls, hyper, etc. Used on
-server-side legs: mailbox ↔ relayer, mailbox ↔ dispatcher.
-
-```
-SmolmixTransport Nym stack:
-
-User code (Envelope over TcpStream)
-        ↓
-tokio-smoltcp::Net
-        ↓
-NymAsyncDevice   (raw IP packet adapter)
-        ↓
-NymIprBridge     (mixnet ↔ channel shuttle)
-        ↓
-IpMixStream → MixnetClient → Nym mixnet → IPR exit node
-```
+Returns a `TcpStream` compatible with tokio-rustls, hyper, etc. Used for interactions between the different 
+services and the blockchain RPC.
 
 ---
 
